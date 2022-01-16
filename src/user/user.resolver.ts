@@ -1,19 +1,19 @@
-import { Resolver, Mutation, Query } from '@nestjs/graphql';
-import { Prisma } from '@prisma/client';
+import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
+import { User } from '@prisma/client';
 import { UserService } from './user.service';
-import { UserType } from './user.type';
+import { UserInput, UserResponse } from './user.type';
 
-@Resolver(() => UserType)
+@Resolver(() => UserResponse)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => String)
-  sayHello(): string {
-    return 'Hello World!';
+  @Query(() => UserResponse)
+  getMe(): Promise<User> {
+    return this.userService.getMe();
   }
 
-  @Mutation(() => UserType)
-  createUser(createUserInput: Prisma.UserCreateInput) {
+  @Mutation(() => UserResponse)
+  createUser(@Args('input') createUserInput: UserInput): Promise<User> {
     return this.userService.createUser(createUserInput);
   }
 }
