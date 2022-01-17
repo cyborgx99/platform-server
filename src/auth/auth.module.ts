@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from 'src/database/prisma.module';
-import { UserResolver } from './user.resolver';
-import { UserService } from './user.service';
+import { UserResolver } from './auth.resolver';
+import { AuthService } from './auth.service';
 
 @Module({
-  providers: [UserResolver, UserService],
+  providers: [UserResolver, AuthService],
   controllers: [],
   exports: [],
   imports: [PrismaModule],
