@@ -1,10 +1,14 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'TEACHER', 'ADMIN');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
-    "lasName" TEXT,
+    "lastName" TEXT,
     "password" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT E'USER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
