@@ -4,3 +4,8 @@ export class CreateUserDto {
   email: string;
   password: string;
 }
+
+export class SignInDto {
+  email: string;
+  password: string;
+}

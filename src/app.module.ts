@@ -9,6 +9,7 @@ import { UserModule } from './auth/auth.module';
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: true,
+      context: ({ req }) => ({ req }),
     }),
     UserModule,
     PrismaModule,

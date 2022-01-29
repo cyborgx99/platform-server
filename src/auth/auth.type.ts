@@ -22,6 +22,12 @@ export class SignUpResponse {
   email: string;
 }
 
+@ObjectType()
+export class SignInResponse {
+  @Field()
+  accessToken: string;
+}
+
 enum UserRole {
   USER = 'USER',
   TEACHER = 'TEACHER',
