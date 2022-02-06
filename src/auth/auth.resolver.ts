@@ -1,6 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { GqlAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
