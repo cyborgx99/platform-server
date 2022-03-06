@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './database/prisma.module';
 import { UserModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
 
 @Module({
@@ -13,9 +13,17 @@ import { configValidationSchema } from './config.schema';
       envFilePath: ['.env'],
       validationSchema: configValidationSchema,
     }),
-    GraphQLModule.forRoot({
-      autoSchemaFile: true,
-      context: ({ req }) => ({ req }),
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        autoSchemaFile: true,
+        context: ({ req }) => ({ req }),
+        cors: {
+          origin: configService.get('CORS_ORIGIN'),
+          credentials: true,
+        },
+      }),
+      inject: [ConfigService],
     }),
     UserModule,
     PrismaModule,
