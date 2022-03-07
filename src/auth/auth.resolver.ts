@@ -15,7 +15,7 @@ import { UserDecorator } from './user';
 export class UserResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Query(() => SignInResponse)
+  @Mutation(() => SignInResponse)
   signIn(
     @Args('input') signInInput: SignInInput,
   ): Promise<{ accessToken: string }> {

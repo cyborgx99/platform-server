@@ -6,6 +6,7 @@ import { PrismaModule } from './database/prisma.module';
 import { UserModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 @Module({
   imports: [
@@ -21,6 +22,13 @@ import { configValidationSchema } from './config.schema';
         cors: {
           origin: configService.get('CORS_ORIGIN'),
           credentials: true,
+        },
+        formatError: (error: GraphQLError) => {
+          const graphQLFormattedError: GraphQLFormattedError = {
+            message:
+              error?.extensions?.exception?.response?.message || error?.message,
+          };
+          return graphQLFormattedError;
         },
       }),
       inject: [ConfigService],
