@@ -1,4 +1,5 @@
 import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
+import { Role, User } from '@prisma/client';
 import {
   IsEmail,
   IsString,
@@ -6,9 +7,27 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Request, Response } from 'express';
+
+enum UserRole {
+  USER = 'USER',
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN',
+}
+
+export type UserWithoutPassword = Omit<User, 'password'>;
+
+export interface Ctx {
+  req: Request;
+  res: Response;
+}
+
+export interface JwtPayload {
+  email: string;
+}
 
 @ObjectType('User')
-export class SignUpResponse {
+export class GetUserResponse {
   @Field((_type) => ID)
   id: string;
 
@@ -20,18 +39,21 @@ export class SignUpResponse {
 
   @Field()
   email: string;
+
+  @Field()
+  role: Role;
+}
+
+@ObjectType()
+export class SignUpResponse {
+  @Field()
+  success: boolean;
 }
 
 @ObjectType()
 export class SignInResponse {
   @Field()
-  accessToken: string;
-}
-
-enum UserRole {
-  USER = 'USER',
-  TEACHER = 'TEACHER',
-  ADMIN = 'ADMIN',
+  success: boolean;
 }
 
 @InputType()
