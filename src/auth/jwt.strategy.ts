@@ -1,24 +1,35 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from '@prisma/client';
+import { AuthenticationError } from 'apollo-server-express';
+import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from 'src/database/prisma.service';
-import { JwtPayload } from './jwt.payload.interface';
+import { JwtPayload, UserWithoutPassword } from './auth.types';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
   ) {
     super({
       secretOrKey: configService.get('JWT_SECRET'),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          let data = request?.cookies['token'];
+
+          if (!data) {
+            throw new AuthenticationError('Unathorized');
+          }
+
+          return data;
+        },
+      ]),
     });
   }
 
-  async validate(payload: JwtPayload): Promise<Omit<User, 'password'>> {
+  async validate(payload: JwtPayload): Promise<UserWithoutPassword> {
     const { email } = payload;
 
     const user = await this.prisma.user.findUnique({
