@@ -7,6 +7,7 @@ import { UserModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { Request, Response } from 'express';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         autoSchemaFile: true,
-        context: ({ req }) => ({ req }),
+        context: ({ req, res }: { req: Request; res: Response }) => {
+          return {
+            req,
+            res,
+          };
+        },
         cors: {
           origin: configService.get('CORS_ORIGIN'),
           credentials: true,
