@@ -3,24 +3,35 @@ import { PrismaService } from '../database/prisma.service';
 import { User, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/create-user.dto';
-import e from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt.payload.interface';
+import { Ctx, JwtPayload } from './auth.types';
+import { CookieOptions } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+  async createUser(
+    data: Prisma.UserCreateInput,
+  ): Promise<{ success: boolean }> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: { ...data, password: hashedPassword },
     });
+    return { success: user ? true : false };
   }
 
-  async getUserToken(data: SignInDto): Promise<{ accessToken: string }> {
+  async getUserToken(
+    data: SignInDto,
+    context: Ctx,
+  ): Promise<{ success: boolean }> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -28,7 +39,18 @@ export class AuthService {
     if (user && (await bcrypt.compare(data.password, user.password))) {
       const payload: JwtPayload = { email: user.email };
       const accessToken = await this.jwtService.sign(payload);
-      return { accessToken };
+
+      const cookieOptions: CookieOptions = {
+        domain: this.configService.get('COOKIE_OPTION_DOMAIN'),
+        secure: process.env.NODE_ENV === 'development' ? false : true,
+        sameSite: 'strict',
+        httpOnly: true,
+        path: '/',
+      };
+
+      // Set the JWT in a cookie
+      context.res.cookie('token', accessToken, cookieOptions);
+      return { success: true };
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }
