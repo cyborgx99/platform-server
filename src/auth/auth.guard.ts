@@ -15,7 +15,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err: any, user: any) {
     if (err || !user) {
-      throw err || new AuthenticationError('GqlAuthGuard');
+      throw err || new AuthenticationError('Unathorized');
     }
     return user;
   }

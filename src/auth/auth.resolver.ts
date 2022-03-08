@@ -1,36 +1,38 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
-import { User } from '@prisma/client';
+import { Resolver, Mutation, Query, Args, Context } from '@nestjs/graphql';
 import { GqlAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
+  Ctx,
   SignInInput,
   SignInResponse,
   SignUpInput,
+  GetUserResponse,
+  UserWithoutPassword,
   SignUpResponse,
-} from './auth.type';
+} from './auth.types';
 import { UserDecorator } from './user';
 
-@Resolver(() => SignUpResponse)
+@Resolver(() => GetUserResponse)
 export class UserResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => SignInResponse)
   signIn(
     @Args('input') signInInput: SignInInput,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.getUserToken(signInInput);
+    @Context() context: Ctx,
+  ): Promise<SignInResponse> {
+    return this.authService.getUserToken(signInInput, context);
   }
 
   @Mutation(() => SignUpResponse)
-  signUp(@Args('input') signUpInput: SignUpInput): Promise<User> {
+  signUp(@Args('input') signUpInput: SignUpInput): Promise<SignUpResponse> {
     return this.authService.createUser(signUpInput);
   }
 
-  @Query(() => String)
+  @Query(() => GetUserResponse)
   @UseGuards(GqlAuthGuard)
-  getShit(@UserDecorator() user: User): string {
-    console.log(user);
-    return '123';
+  getUser(@UserDecorator() user: UserWithoutPassword): UserWithoutPassword {
+    return user;
   }
 }
