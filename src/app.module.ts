@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { Request, Response } from 'express';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './database/prisma.module';
 import { UserModule } from './auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import { Request, Response } from 'express';
+import { PrismaModule } from './database/prisma.module';
 
 @Module({
   imports: [

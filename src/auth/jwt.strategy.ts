@@ -5,6 +5,7 @@ import { AuthenticationError } from 'apollo-server-express';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from 'src/database/prisma.service';
+
 import { JwtPayload, UserWithoutPassword } from './auth.types';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: configService.get('JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          let data = request?.cookies['token'];
+          const data = request?.cookies['token'];
 
           if (!data) {
             throw new AuthenticationError('Unathorized');

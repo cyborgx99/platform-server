@@ -1,15 +1,16 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Mutation, Query, Args, Context } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+
 import { GqlAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
   Ctx,
+  GetUserResponse,
   SignInInput,
   SignInResponse,
   SignUpInput,
-  GetUserResponse,
-  UserWithoutPassword,
   SignUpResponse,
+  UserWithoutPassword,
 } from './auth.types';
 import { UserDecorator } from './user';
 
