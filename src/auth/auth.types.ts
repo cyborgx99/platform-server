@@ -56,6 +56,12 @@ export class SignInResponse {
   success: boolean;
 }
 
+@ObjectType()
+export class LogoutResponse {
+  @Field()
+  success: boolean;
+}
+
 @InputType()
 export class SignUpInput {
   @Field()

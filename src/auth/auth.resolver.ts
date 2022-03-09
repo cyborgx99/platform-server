@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import {
   Ctx,
   GetUserResponse,
+  LogoutResponse,
   SignInInput,
   SignInResponse,
   SignUpInput,
@@ -29,6 +30,12 @@ export class UserResolver {
   @Mutation(() => SignUpResponse)
   signUp(@Args('input') signUpInput: SignUpInput): Promise<SignUpResponse> {
     return this.authService.createUser(signUpInput);
+  }
+
+  @Mutation(() => LogoutResponse)
+  @UseGuards(GqlAuthGuard)
+  logout(@Context() context: Ctx): Promise<LogoutResponse> {
+    return this.authService.logout(context);
   }
 
   @Query(() => GetUserResponse)

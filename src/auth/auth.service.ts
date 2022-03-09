@@ -17,6 +17,14 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
+  cookieOptions: CookieOptions = {
+    domain: this.configService.get('COOKIE_OPTION_DOMAIN'),
+    secure: process.env.NODE_ENV === 'development' ? false : true,
+    sameSite: 'strict',
+    httpOnly: true,
+    path: '/',
+  };
+
   async createUser(
     data: Prisma.UserCreateInput,
   ): Promise<{ success: boolean }> {
@@ -41,19 +49,17 @@ export class AuthService {
       const payload: JwtPayload = { email: user.email };
       const accessToken = await this.jwtService.sign(payload);
 
-      const cookieOptions: CookieOptions = {
-        domain: this.configService.get('COOKIE_OPTION_DOMAIN'),
-        secure: process.env.NODE_ENV === 'development' ? false : true,
-        sameSite: 'strict',
-        httpOnly: true,
-        path: '/',
-      };
-
       // Set the JWT in a cookie
-      context.res.cookie('token', accessToken, cookieOptions);
+      context.res.cookie('token', accessToken, this.cookieOptions);
       return { success: true };
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }
+  }
+
+  async logout(context: Ctx): Promise<{ success: boolean }> {
+    // Clear  cookie
+    context.res.clearCookie('token', this.cookieOptions);
+    return { success: true };
   }
 }
