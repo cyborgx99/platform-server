@@ -84,11 +84,11 @@ export class SignUpInput {
 
   @Field()
   @IsString()
-  @MaxLength(32)
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/g, {
+  @Matches(/^(?=(.*\d){1})(.*\S)(?=.*[a-zA-Z\S])[0-9a-zA-Z\S]{6,}/, {
     message:
       'Password must have at least 6 characters, one letter, and one number',
   })
+  @MaxLength(32)
   password: string;
 
   @Field({ defaultValue: UserRole.USER })

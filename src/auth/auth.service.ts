@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
@@ -31,10 +36,23 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    const user = await this.prisma.user.create({
-      data: { ...data, password: hashedPassword },
-    });
-    return { success: user ? true : false };
+    try {
+      const user = await this.prisma.user.create({
+        data: { ...data, password: hashedPassword },
+      });
+
+      return { success: user ? true : false };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new HttpException(
+            'Could not register this user.',
+            HttpStatus.CONFLICT,
+          );
+        }
+      }
+      throw error;
+    }
   }
 
   async getUserToken(
