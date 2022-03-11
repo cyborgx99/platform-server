@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { UserModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { PrismaModule } from './database/prisma.module';
     }),
     UserModule,
     PrismaModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
