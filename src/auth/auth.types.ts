@@ -1,4 +1,10 @@
-import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { Role, User } from '@prisma/client';
 import {
   IsEmail,
@@ -9,11 +15,9 @@ import {
 } from 'class-validator';
 import { Request, Response } from 'express';
 
-enum UserRole {
-  USER = 'USER',
-  TEACHER = 'TEACHER',
-  ADMIN = 'ADMIN',
-}
+registerEnumType(Role, {
+  name: 'Role',
+});
 
 export type UserWithoutPassword = Omit<User, 'password'>;
 
@@ -40,7 +44,7 @@ export class GetUserResponse {
   @Field()
   email: string;
 
-  @Field()
+  @Field(() => Role)
   role: Role;
 }
 
@@ -91,8 +95,8 @@ export class SignUpInput {
   @MaxLength(32)
   password: string;
 
-  @Field({ defaultValue: UserRole.USER })
-  role?: UserRole;
+  @Field(() => Role, { defaultValue: Role.USER })
+  role?: Role;
 }
 
 @InputType()
