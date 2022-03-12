@@ -1,9 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { AuthenticationError } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-express';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
 
 import { JwtPayload, UserWithoutPassword } from './auth.types';
@@ -21,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           const data = request?.cookies['token'];
 
           if (!data) {
-            throw new AuthenticationError('Unathorized');
+            throw new ApolloError(Error_Codes.Unathorized);
           }
 
           return data;
@@ -46,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new ApolloError(Error_Codes.Unathorized);
     }
 
     return user;

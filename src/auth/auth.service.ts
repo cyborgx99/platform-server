@@ -1,14 +1,11 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
+import { ApolloError } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
 import { CookieOptions } from 'express';
+import { Error_Codes } from 'src/app.types';
 
 import { PrismaService } from '../database/prisma.service';
 import { Ctx, JwtPayload } from './auth.types';
@@ -45,10 +42,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new HttpException(
-            'Could not register this user.',
-            HttpStatus.CONFLICT,
-          );
+          throw new ApolloError(Error_Codes.UserConflict);
         }
       }
       throw error;
@@ -71,7 +65,7 @@ export class AuthService {
       context.res.cookie('token', accessToken, this.cookieOptions);
       return { success: true };
     } else {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new ApolloError(Error_Codes.InvalidCredentials);
     }
   }
 
