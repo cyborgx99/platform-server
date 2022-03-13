@@ -4,13 +4,12 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import {
+  AuthSuccessResponse,
+  CreateResetPasswordLinkInput,
   Ctx,
   GetUserResponse,
-  LogoutResponse,
   SignInInput,
-  SignInResponse,
   SignUpInput,
-  SignUpResponse,
   UserWithoutPassword,
 } from './auth.types';
 import { UserDecorator } from './user';
@@ -19,22 +18,33 @@ import { UserDecorator } from './user';
 export class UserResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => SignInResponse)
+  @Mutation(() => AuthSuccessResponse)
   signIn(
     @Args('input') signInInput: SignInInput,
     @Context() context: Ctx,
-  ): Promise<SignInResponse> {
+  ): Promise<AuthSuccessResponse> {
     return this.authService.getUserToken(signInInput, context);
   }
 
-  @Mutation(() => SignUpResponse)
-  signUp(@Args('input') signUpInput: SignUpInput): Promise<SignUpResponse> {
+  @Mutation(() => AuthSuccessResponse)
+  signUp(
+    @Args('input') signUpInput: SignUpInput,
+  ): Promise<AuthSuccessResponse> {
     return this.authService.createUser(signUpInput);
   }
 
-  @Mutation(() => LogoutResponse)
+  @Mutation(() => AuthSuccessResponse)
+  resetPasswordLink(
+    @Args('input') createResetPasswordLinkInput: CreateResetPasswordLinkInput,
+  ): Promise<AuthSuccessResponse> {
+    return this.authService.createResetPasswordLink(
+      createResetPasswordLinkInput,
+    );
+  }
+
+  @Mutation(() => AuthSuccessResponse)
   @UseGuards(GqlAuthGuard)
-  logout(@Context() context: Ctx): Promise<LogoutResponse> {
+  logout(@Context() context: Ctx): Promise<AuthSuccessResponse> {
     return this.authService.logout(context);
   }
 

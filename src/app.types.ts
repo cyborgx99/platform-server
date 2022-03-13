@@ -4,4 +4,5 @@ export enum Error_Codes {
   Unathorized = 'UNATHORIZED',
   NoInternet = 'NO_INTERNET',
   NetworkError = 'NETWORK_ERROR',
+  SomethingWentWrong = 'SOMETHING_WENT_WRONG',
 }

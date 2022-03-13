@@ -6,10 +6,11 @@ import { ApolloError } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
 import { CookieOptions } from 'express';
 import { Error_Codes } from 'src/app.types';
+import { MailService } from 'src/mail/mail.service';
 
 import { PrismaService } from '../database/prisma.service';
 import { Ctx, JwtPayload } from './auth.types';
-import { SignInDto } from './dto/create-user.dto';
+import { ResetPasswordLinkDto, SignInDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailService: MailService,
   ) {}
 
   cookieOptions: CookieOptions = {
@@ -67,6 +69,34 @@ export class AuthService {
     } else {
       throw new ApolloError(Error_Codes.InvalidCredentials);
     }
+  }
+
+  async createResetPasswordLink(
+    resetPasswordLinkInput: ResetPasswordLinkDto,
+  ): Promise<{ success: boolean }> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: resetPasswordLinkInput.email },
+    });
+
+    if (!user) {
+      throw new ApolloError(Error_Codes.SomethingWentWrong);
+    }
+
+    const payload: JwtPayload = { email: resetPasswordLinkInput.email };
+    const resetToken = await this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_RESET_SECRET'),
+    });
+
+    const url = `http://localhost:3000/forgot-password?reset=${resetToken}`;
+
+    this.mailService.sendEmail(
+      'cyborgx999@gmail.com',
+      'hello',
+      { url: url, name: 'Server' },
+      'resetPassword',
+    );
+
+    return { success: true };
   }
 
   async logout(context: Ctx): Promise<{ success: boolean }> {

@@ -49,19 +49,7 @@ export class GetUserResponse {
 }
 
 @ObjectType()
-export class SignUpResponse {
-  @Field()
-  success: boolean;
-}
-
-@ObjectType()
-export class SignInResponse {
-  @Field()
-  success: boolean;
-}
-
-@ObjectType()
-export class LogoutResponse {
+export class AuthSuccessResponse {
   @Field()
   success: boolean;
 }
@@ -97,6 +85,15 @@ export class SignUpInput {
 
   @Field(() => Role, { defaultValue: Role.USER })
   role?: Role;
+}
+
+@InputType()
+export class CreateResetPasswordLinkInput {
+  @Field()
+  @IsString()
+  @MinLength(2)
+  @IsEmail({}, { message: 'Invalid email' })
+  email: string;
 }
 
 @InputType()

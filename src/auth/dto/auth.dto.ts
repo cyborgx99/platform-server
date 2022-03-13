@@ -9,3 +9,7 @@ export class SignInDto {
   email: string;
   password: string;
 }
+
+export class ResetPasswordLinkDto {
+  email: string;
+}
