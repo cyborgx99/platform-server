@@ -13,3 +13,8 @@ export class SignInDto {
 export class ResetPasswordLinkDto {
   email: string;
 }
+
+export class SetNewPasswordDto {
+  password: string;
+  resetToken: string;
+}

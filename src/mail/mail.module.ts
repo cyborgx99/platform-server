@@ -16,7 +16,7 @@ import { MailService } from './mail.service';
         },
         template: {
           dir: __dirname + '/templates',
-          adapter: new HandlebarsAdapter(),
+          adapter: new HandlebarsAdapter(undefined, { inlineCssEnabled: true }),
           options: {
             strict: true,
           },

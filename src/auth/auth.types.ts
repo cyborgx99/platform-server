@@ -19,7 +19,7 @@ registerEnumType(Role, {
   name: 'Role',
 });
 
-export type UserWithoutPassword = Omit<User, 'password'>;
+export type UserWithoutPassword = Omit<User, 'password' | 'resetToken'>;
 
 export interface Ctx {
   req: Request;
@@ -76,7 +76,7 @@ export class SignUpInput {
 
   @Field()
   @IsString()
-  @Matches(/^(?=(.*\d){1})(.*\S)(?=.*[a-zA-Z\S])[0-9a-zA-Z\S]{6,}/, {
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, {
     message:
       'Password must have at least 6 characters, one letter, and one number',
   })
@@ -94,6 +94,21 @@ export class CreateResetPasswordLinkInput {
   @MinLength(2)
   @IsEmail({}, { message: 'Invalid email' })
   email: string;
+}
+@InputType()
+export class SetNewPasswordInput {
+  @Field()
+  @IsString()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, {
+    message:
+      'Password must have at least 6 characters, one letter, and one number',
+  })
+  @MaxLength(32)
+  password: string;
+
+  @Field()
+  @IsString()
+  resetToken: string;
 }
 
 @InputType()

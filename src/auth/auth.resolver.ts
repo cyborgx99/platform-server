@@ -8,6 +8,7 @@ import {
   CreateResetPasswordLinkInput,
   Ctx,
   GetUserResponse,
+  SetNewPasswordInput,
   SignInInput,
   SignUpInput,
   UserWithoutPassword,
@@ -40,6 +41,13 @@ export class UserResolver {
     return this.authService.createResetPasswordLink(
       createResetPasswordLinkInput,
     );
+  }
+
+  @Mutation(() => AuthSuccessResponse)
+  setNewPassword(
+    @Args('input') setNewPasswordInput: SetNewPasswordInput,
+  ): Promise<AuthSuccessResponse> {
+    return this.authService.setNewPassword(setNewPasswordInput);
   }
 
   @Mutation(() => AuthSuccessResponse)

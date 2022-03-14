@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Catch, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
@@ -10,9 +10,14 @@ import { MailService } from 'src/mail/mail.service';
 
 import { PrismaService } from '../database/prisma.service';
 import { Ctx, JwtPayload } from './auth.types';
-import { ResetPasswordLinkDto, SignInDto } from './dto/auth.dto';
+import {
+  ResetPasswordLinkDto,
+  SetNewPasswordDto,
+  SignInDto,
+} from './dto/auth.dto';
 
 @Injectable()
+@Catch()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
@@ -51,6 +56,44 @@ export class AuthService {
     }
   }
 
+  async setNewPassword(data: SetNewPasswordDto): Promise<{ success: boolean }> {
+    try {
+      const decoded = await this.jwtService.verifyAsync<JwtPayload>(
+        data.resetToken,
+        {
+          secret: this.configService.get('JWT_RESET_SECRET'),
+        },
+      );
+
+      const user = await this.prisma.user.findFirst({
+        where: { email: decoded?.email, resetToken: data.resetToken },
+      });
+
+      if (user === null || decoded === null) {
+        throw new ApolloError(Error_Codes.InvalidOrExpired);
+      }
+
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(data.password, salt);
+
+      const updatedUser = await this.prisma.user.update({
+        where: { email: user.email },
+        data: { password: hashedPassword, resetToken: '' },
+      });
+
+      return { success: updatedUser ? true : false };
+    } catch (error) {
+      if (
+        error.message === 'jwt expired' ||
+        error.message === 'invalid token'
+      ) {
+        throw new ApolloError(Error_Codes.InvalidOrExpired);
+      } else {
+        throw error;
+      }
+    }
+  }
+
   async getUserToken(
     data: SignInDto,
     context: Ctx,
@@ -83,16 +126,24 @@ export class AuthService {
     }
 
     const payload: JwtPayload = { email: resetPasswordLinkInput.email };
-    const resetToken = await this.jwtService.sign(payload, {
+    const resetToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_RESET_SECRET'),
+      expiresIn: '15m',
     });
 
-    const url = `http://localhost:3000/forgot-password?reset=${resetToken}`;
+    await this.prisma.user.update({
+      where: { email: resetPasswordLinkInput.email },
+      data: { resetToken },
+    });
 
-    this.mailService.sendEmail(
-      'cyborgx999@gmail.com',
-      'hello',
-      { url: url, name: 'Server' },
+    const url = `${this.configService.get(
+      'CORS_ORIGIN',
+    )}/set-password?reset=${resetToken}`;
+
+    await this.mailService.sendEmail(
+      `${resetPasswordLinkInput.email}`,
+      'Reset Password Request.',
+      { url: url, name: `${user?.name}` },
       'resetPassword',
     );
 
