@@ -5,4 +5,5 @@ export enum Error_Codes {
   NoInternet = 'NO_INTERNET',
   NetworkError = 'NETWORK_ERROR',
   SomethingWentWrong = 'SOMETHING_WENT_WRONG',
+  InvalidOrExpired = 'InvalidOrExpired',
 }

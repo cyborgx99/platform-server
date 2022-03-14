@@ -17,6 +17,7 @@ model User {
   lastName String?
   password String
   role    Role     @default(USER)
+  resetToken String?
 }
 
 enum Role {

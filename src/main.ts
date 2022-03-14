@@ -21,6 +21,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
+
   const PORT = process.env.PORT || 3001;
   await app.listen(PORT);
 }
