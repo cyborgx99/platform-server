@@ -27,9 +27,8 @@ export class AuthService {
   ) {}
 
   cookieOptions: CookieOptions = {
-    domain: this.configService.get('COOKIE_OPTION_DOMAIN'),
     secure: process.env.NODE_ENV === 'development' ? false : true,
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     httpOnly: true,
     path: '/',
   };
