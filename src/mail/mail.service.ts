@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { join } from 'path';
 
 @Injectable()
 export class MailService {
@@ -16,13 +15,7 @@ export class MailService {
       to: address,
       // from: '"Support Team" <support@example.com>', // override default from
       subject,
-      template: join(
-        process.cwd(),
-        'dist',
-        'mail',
-        'templates',
-        `${templateName}.hbs`,
-      ),
+      template: `${templateName}.hbs`,
       context,
     });
   }
