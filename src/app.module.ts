@@ -1,3 +1,4 @@
+import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -14,11 +15,12 @@ import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
+      envFilePath: ['.env', '.env.development', '.env.test'],
       validationSchema: configValidationSchema,
     }),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule],
+      driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({
         autoSchemaFile: true,
         context: ({ req, res }: { req: Request; res: Response }) => {
