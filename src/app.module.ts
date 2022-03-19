@@ -23,6 +23,9 @@ import { MailModule } from './mail/mail.module';
       driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({
         autoSchemaFile: true,
+        subscriptions: {
+          'graphql-ws': true,
+        },
         context: ({ req, res }: { req: Request; res: Response }) => {
           return {
             req,
