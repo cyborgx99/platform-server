@@ -30,4 +30,4 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
 })
-export class UserModule {}
+export class AuthModule {}

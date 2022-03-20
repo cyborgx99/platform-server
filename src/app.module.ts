@@ -7,10 +7,11 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
 import { MailModule } from './mail/mail.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MailModule } from './mail/mail.module';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
     UserModule,
     PrismaModule,
     MailModule,
