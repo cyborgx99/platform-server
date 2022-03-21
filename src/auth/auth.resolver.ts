@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 
 import { GqlAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -7,21 +7,18 @@ import {
   AuthSuccessResponse,
   CreateResetPasswordLinkInput,
   Ctx,
-  GetUserResponse,
   SetNewPasswordInput,
   SignInInput,
   SignUpInput,
-  UserWithoutPassword,
-} from './auth.types';
-import { UserDecorator } from './user';
+} from './dto/auth.dto';
 
-@Resolver(() => GetUserResponse)
-export class UserResolver {
+@Resolver('Auth')
+export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => AuthSuccessResponse)
   signIn(
-    @Args('input') signInInput: SignInInput,
+    @Args('signInInput') signInInput: SignInInput,
     @Context() context: Ctx,
   ): Promise<AuthSuccessResponse> {
     return this.authService.getUserToken(signInInput, context);
@@ -29,14 +26,15 @@ export class UserResolver {
 
   @Mutation(() => AuthSuccessResponse)
   signUp(
-    @Args('input') signUpInput: SignUpInput,
+    @Args('signUpInput') signUpInput: SignUpInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.createUser(signUpInput);
   }
 
   @Mutation(() => AuthSuccessResponse)
   resetPasswordLink(
-    @Args('input') createResetPasswordLinkInput: CreateResetPasswordLinkInput,
+    @Args('createResetPasswordLinkInput')
+    createResetPasswordLinkInput: CreateResetPasswordLinkInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.createResetPasswordLink(
       createResetPasswordLinkInput,
@@ -45,7 +43,7 @@ export class UserResolver {
 
   @Mutation(() => AuthSuccessResponse)
   setNewPassword(
-    @Args('input') setNewPasswordInput: SetNewPasswordInput,
+    @Args('setNewPasswordInput') setNewPasswordInput: SetNewPasswordInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.setNewPassword(setNewPasswordInput);
   }
@@ -54,11 +52,5 @@ export class UserResolver {
   @UseGuards(GqlAuthGuard)
   logout(@Context() context: Ctx): Promise<AuthSuccessResponse> {
     return this.authService.logout(context);
-  }
-
-  @Query(() => GetUserResponse)
-  @UseGuards(GqlAuthGuard)
-  getUser(@UserDecorator() user: UserWithoutPassword): UserWithoutPassword {
-    return user;
   }
 }

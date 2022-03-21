@@ -2,6 +2,7 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { Request, Response } from 'express';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
@@ -23,6 +24,8 @@ import { UserModule } from './user/user.module';
       imports: [ConfigModule],
       driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({
+        playground: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
         autoSchemaFile: true,
         subscriptions: {
           'graphql-ws': true,
@@ -34,7 +37,10 @@ import { UserModule } from './user/user.module';
           };
         },
         cors: {
-          origin: configService.get('CORS_ORIGIN'),
+          origin: [
+            configService.get('CORS_ORIGIN'),
+            'https://studio.apollographql.com',
+          ],
           credentials: true,
         },
         formatError: (error: GraphQLError) => {

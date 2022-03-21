@@ -2,36 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
-import { GetUsersDto } from './dto/user.dto';
+import { GetUsersArgs, GetUsersResponse } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async getUsers(data: GetUsersDto) {
+  async getUsers(data: GetUsersArgs): Promise<GetUsersResponse> {
+    const options = {
+      where: { role: Role.USER },
+      take: data.limit,
+      select: {
+        password: false,
+        lastName: true,
+        name: true,
+        id: true,
+        role: true,
+        email: true,
+        createdAt: true,
+      },
+    };
+
+    const optionsWithCursor = {
+      ...options,
+      skip: 1,
+      cursor: {
+        id: data.cursor,
+      },
+    };
+
     const [users, totalUsers] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        where: { role: Role.USER },
-        take: data.limit,
-        skip: data.cursor ? 1 : 0,
-        cursor: {
-          id: data.cursor,
-        },
-        select: {
-          password: false,
-          lastName: true,
-          name: true,
-          id: true,
-          role: true,
-          email: true,
-        },
-      }),
+      this.prisma.user.findMany(data.cursor ? optionsWithCursor : options),
       this.prisma.user.count(),
     ]);
 
-    const lastPostInResults = users[data.limit - 1];
-    const cursor = lastPostInResults.id;
-    const pages = Math.floor(totalUsers / data.limit);
+    const lastPostInResults = users[users.length - 1];
+    const cursor = lastPostInResults?.id;
+    const pages = Math.ceil(totalUsers / data.limit);
 
     return {
       data: users,
