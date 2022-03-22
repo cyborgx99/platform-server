@@ -6,11 +6,7 @@ import { RolesGuard } from 'src/auth/dto/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserDecorator } from 'src/user/user.decorator';
 
-import {
-  GetUsersArgs,
-  GetUsersResponse,
-  UserWithoutPassword,
-} from './dto/user.dto';
+import { GetUsersResponse, UserWithoutPassword } from './dto/user.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
 
@@ -28,8 +24,9 @@ export class UserResolver {
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   getUsers(
-    @Args('getUsersArgs') getUsersArgs: GetUsersArgs,
+    @Args('offset') offset: number,
+    @Args('limit') limit: number,
   ): Promise<GetUsersResponse> {
-    return this.userService.getUsers(getUsersArgs);
+    return this.userService.getUsers(offset, limit);
   }
 }

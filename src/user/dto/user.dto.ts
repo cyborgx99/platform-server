@@ -9,7 +9,7 @@ export class GetUsersArgs {
   limit: number;
 
   @Field({ nullable: true })
-  cursor?: number;
+  offset?: number;
 }
 @ObjectType()
 export class GetUsersResponse {
@@ -17,7 +17,7 @@ export class GetUsersResponse {
   data: User[];
 
   @Field()
-  cursor: number;
+  totalCount: number;
 
   @Field()
   pages: number;

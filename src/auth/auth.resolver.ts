@@ -18,7 +18,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthSuccessResponse)
   signIn(
-    @Args('signInInput') signInInput: SignInInput,
+    @Args('input') signInInput: SignInInput,
     @Context() context: Ctx,
   ): Promise<AuthSuccessResponse> {
     return this.authService.getUserToken(signInInput, context);
@@ -26,14 +26,14 @@ export class AuthResolver {
 
   @Mutation(() => AuthSuccessResponse)
   signUp(
-    @Args('signUpInput') signUpInput: SignUpInput,
+    @Args('input') signUpInput: SignUpInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.createUser(signUpInput);
   }
 
   @Mutation(() => AuthSuccessResponse)
   resetPasswordLink(
-    @Args('createResetPasswordLinkInput')
+    @Args('input')
     createResetPasswordLinkInput: CreateResetPasswordLinkInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.createResetPasswordLink(
@@ -43,7 +43,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthSuccessResponse)
   setNewPassword(
-    @Args('setNewPasswordInput') setNewPasswordInput: SetNewPasswordInput,
+    @Args('input') setNewPasswordInput: SetNewPasswordInput,
   ): Promise<AuthSuccessResponse> {
     return this.authService.setNewPassword(setNewPasswordInput);
   }
