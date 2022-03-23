@@ -9,11 +9,13 @@ import { Error_Codes } from 'src/app.types';
 import { MailService } from 'src/mail/mail.service';
 
 import { PrismaService } from '../database/prisma.service';
-import { Ctx, JwtPayload } from './auth.types';
 import {
-  ResetPasswordLinkDto,
-  SetNewPasswordDto,
-  SignInDto,
+  AuthSuccessResponse,
+  CreateResetPasswordLinkInput,
+  Ctx,
+  JwtPayload,
+  SetNewPasswordInput,
+  SignInInput,
 } from './dto/auth.dto';
 
 @Injectable()
@@ -33,9 +35,7 @@ export class AuthService {
     path: '/',
   };
 
-  async createUser(
-    data: Prisma.UserCreateInput,
-  ): Promise<{ success: boolean }> {
+  async createUser(data: Prisma.UserCreateInput): Promise<AuthSuccessResponse> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
@@ -55,7 +55,9 @@ export class AuthService {
     }
   }
 
-  async setNewPassword(data: SetNewPasswordDto): Promise<{ success: boolean }> {
+  async setNewPassword(
+    data: SetNewPasswordInput,
+  ): Promise<AuthSuccessResponse> {
     try {
       const decoded = await this.jwtService.verifyAsync<JwtPayload>(
         data.resetToken,
@@ -94,9 +96,9 @@ export class AuthService {
   }
 
   async getUserToken(
-    data: SignInDto,
+    data: SignInInput,
     context: Ctx,
-  ): Promise<{ success: boolean }> {
+  ): Promise<AuthSuccessResponse> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -114,8 +116,8 @@ export class AuthService {
   }
 
   async createResetPasswordLink(
-    resetPasswordLinkInput: ResetPasswordLinkDto,
-  ): Promise<{ success: boolean }> {
+    resetPasswordLinkInput: CreateResetPasswordLinkInput,
+  ): Promise<AuthSuccessResponse> {
     const user = await this.prisma.user.findUnique({
       where: { email: resetPasswordLinkInput.email },
     });
@@ -149,7 +151,7 @@ export class AuthService {
     return { success: true };
   }
 
-  async logout(context: Ctx): Promise<{ success: boolean }> {
+  async logout(context: Ctx): Promise<AuthSuccessResponse> {
     // Clear  cookie
     context.res.clearCookie('token', this.cookieOptions);
     return { success: true };

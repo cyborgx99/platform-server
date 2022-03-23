@@ -2,16 +2,19 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { Request, Response } from 'express';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
 import { MailModule } from './mail/mail.module';
-
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +25,8 @@ import { MailModule } from './mail/mail.module';
       imports: [ConfigModule],
       driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({
+        playground: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
         autoSchemaFile: true,
         subscriptions: {
           'graphql-ws': true,
@@ -33,7 +38,10 @@ import { MailModule } from './mail/mail.module';
           };
         },
         cors: {
-          origin: configService.get('CORS_ORIGIN'),
+          origin: [
+            configService.get('CORS_ORIGIN'),
+            'https://studio.apollographql.com',
+          ],
           credentials: true,
         },
         formatError: (error: GraphQLError) => {
@@ -46,12 +54,14 @@ import { MailModule } from './mail/mail.module';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
     UserModule,
     PrismaModule,
     MailModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CloudinaryProvider],
   exports: [],
 })
 export class AppModule {}

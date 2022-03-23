@@ -6,8 +6,9 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
+import { UserWithoutPassword } from 'src/user/dto/user.dto';
 
-import { JwtPayload, UserWithoutPassword } from './auth.types';
+import { JwtPayload } from './dto/auth.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -43,6 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         id: true,
         role: true,
         email: true,
+        createdAt: true,
       },
     });
 
