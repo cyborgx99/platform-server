@@ -9,11 +9,12 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -57,9 +58,10 @@ import { UserModule } from './user/user.module';
     UserModule,
     PrismaModule,
     MailModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CloudinaryProvider],
   exports: [],
 })
 export class AppModule {}
