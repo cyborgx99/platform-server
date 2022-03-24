@@ -20,6 +20,7 @@ export class UploadResolver {
     @Args('file', { type: () => GraphQLUpload }) file: FileUpload,
   ): Promise<FileUploadResponse> {
     const { secure_url } = await this.cloudinaryService.uploadImage(file);
+
     return secure_url;
   }
 }
