@@ -13,6 +13,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
+import { LessonModule } from './lesson/lesson.module';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
 @Module({
@@ -59,6 +60,7 @@ import { UserModule } from './user/user.module';
     PrismaModule,
     MailModule,
     CloudinaryModule,
+    LessonModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],

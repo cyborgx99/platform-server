@@ -6,7 +6,7 @@ import { GetUsersResponse } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getUsers(offset: number, limit: number): Promise<GetUsersResponse> {
     const [users, totalUsers] = await this.prisma.$transaction([
