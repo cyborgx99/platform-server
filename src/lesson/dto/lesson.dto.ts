@@ -1,11 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { LessonImage } from '../models/lesson.model';
-
 @InputType()
 export class CreateLessonInput {
-  @Field(() => LessonImage)
-  image: LessonImage;
+  @Field()
+  imageId: number;
 
   @Field()
   title: string;
