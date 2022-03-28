@@ -1,18 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { LessonImage } from 'src/lesson-image/models/lesson-image.model';
 
-@ObjectType('LessonImage')
-export class LessonImage {
-  @Field(() => ID)
-  id: number;
-
-  @Field(() => String)
-  url: string;
-
-  @Field(() => String)
-  baseImageId: string;
-}
-
-@ObjectType({ description: 'Lesson' })
+@ObjectType('Lesson')
 export class Lesson {
   @Field(() => ID)
   id: number;

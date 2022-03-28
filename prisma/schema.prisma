@@ -49,7 +49,8 @@ model Transaction {
 model LessonImage {
   id Int @id @default(autoincrement())
   url String
-  baseImageId String
+  publicId String?
+  title String
   lesson Lesson?
 }
 
