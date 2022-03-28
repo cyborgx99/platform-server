@@ -4,4 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class FileUploadResponse {
   @Field()
   url: string;
+
+  @Field()
+  publicId: string;
 }

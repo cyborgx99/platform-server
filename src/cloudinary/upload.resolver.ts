@@ -19,7 +19,9 @@ export class UploadResolver {
   async uploadFile(
     @Args('file', { type: () => GraphQLUpload }) file: FileUpload,
   ): Promise<FileUploadResponse> {
-    const { secure_url } = await this.cloudinaryService.uploadImage(file);
-    return secure_url;
+    const { secure_url, public_id } = await this.cloudinaryService.uploadImage(
+      file,
+    );
+    return { url: secure_url, publicId: public_id };
   }
 }

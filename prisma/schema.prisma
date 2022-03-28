@@ -46,9 +46,20 @@ model Transaction {
   date  DateTime
 }
 
+model LessonImage {
+  id Int @id @default(autoincrement())
+  url String
+  publicId String?
+  title String
+  lesson Lesson?
+}
+
 model Lesson {
   id Int  @id @default(autoincrement())
-  img String
+  image   LessonImage @relation(fields: [imageId], references: [id])
+  imageId Int
+  title String
+  description String
   content String
   classrooms Classroom[]
   createdAt DateTime @default(now())
