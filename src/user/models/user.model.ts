@@ -4,7 +4,7 @@ import { Role } from '@prisma/client';
 @ObjectType({ description: 'User' })
 export class User {
   @Field(() => ID)
-  id: number;
+  id: string;
 
   @Field()
   name: string;

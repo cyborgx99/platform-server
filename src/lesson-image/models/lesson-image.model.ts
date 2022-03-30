@@ -4,7 +4,7 @@ import { Lesson } from 'src/lesson/models/lesson.model';
 @ObjectType()
 export class LessonImage {
   @Field(() => ID)
-  id: number;
+  id: string;
 
   @Field(() => String)
   title: string;
