@@ -41,7 +41,8 @@ export class LessonImageResolver {
   getLessonImages(
     @Args('offset') offset: number,
     @Args('limit') limit: number,
+    @Args('search', { nullable: true }) search?: string,
   ): Promise<GetLessonImagesResponse> {
-    return this.lessonImageService.getLessonImages(offset, limit);
+    return this.lessonImageService.getLessonImages(offset, limit, search);
   }
 }

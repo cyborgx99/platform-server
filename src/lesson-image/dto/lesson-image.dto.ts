@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
 
 import { LessonImage } from '../models/lesson-image.model';
 
@@ -16,8 +16,8 @@ export class CreateLessonImageInput {
 
 @InputType()
 export class DeleteLessonImageInput {
-  @Field()
-  id: number;
+  @Field(() => ID)
+  id: string;
 
   @Field(() => String, { nullable: true })
   publicId?: string;
@@ -27,8 +27,8 @@ export class DeleteLessonImageInput {
 export class UpdateLessonImageInput extends PartialType(
   CreateLessonImageInput,
 ) {
-  @Field()
-  id: number;
+  @Field(() => ID)
+  id: string;
 }
 @ObjectType()
 export class GetLessonImagesResponse {
