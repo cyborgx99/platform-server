@@ -55,20 +55,10 @@ model LessonImage {
   lesson Lesson?
 }
 
-enum LessonContentType {
-  TEXT
-  TITLE
-  GAP
-  MULTI
-  SCRAMBLE
-}
 
 model LessonContent {
   id  String  @id @default(uuid())
-  sentence String
-  answers String[]
-  pieces String[]
-  type LessonContentType
+  sentences String //JSON String
   lessons Lesson[]
 }
 

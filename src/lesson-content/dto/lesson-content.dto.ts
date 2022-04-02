@@ -1,17 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { LessonContentType } from '@prisma/client';
+
+import { LessonContentSentence } from '../models/lesson-content.model';
 
 @InputType()
 export class CreateLessonContentInput {
-  @Field()
-  sentence: string;
-
-  @Field(() => [String])
-  answers: string[];
-
-  @Field(() => [String])
-  pieces: string[];
-
-  @Field(() => LessonContentType)
-  type: LessonContentType;
+  @Field(() => [LessonContentSentence])
+  sentences: LessonContentSentence[];
 }
