@@ -58,6 +58,7 @@ model LessonImage {
 
 model LessonContent {
   id  String  @id @default(uuid())
+  title String
   sentences String //JSON String
   lessons Lesson[]
 }
