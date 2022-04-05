@@ -14,6 +14,7 @@ import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
 import { LessonModule } from './lesson/lesson.module';
+import { LessonContentModule } from './lesson-content/lesson-content.module';
 import { LessonImageModule } from './lesson-image/lesson-image.module';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
@@ -48,8 +49,7 @@ import { UserModule } from './user/user.module';
         },
         formatError: (error: GraphQLError) => {
           const graphQLFormattedError: GraphQLFormattedError = {
-            message:
-              error?.extensions?.exception?.response?.message || error?.message,
+            message: error?.extensions?.exception.code || error?.message,
           };
           return graphQLFormattedError;
         },
@@ -63,6 +63,7 @@ import { UserModule } from './user/user.module';
     CloudinaryModule,
     LessonModule,
     LessonImageModule,
+    LessonContentModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
