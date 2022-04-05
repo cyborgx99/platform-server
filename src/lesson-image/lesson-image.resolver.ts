@@ -19,16 +19,22 @@ export class LessonImageResolver {
   constructor(private readonly lessonImageService: LessonImageService) {}
 
   @Mutation(() => LessonImage)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonImage(@Args('input') createLessonInput: CreateLessonImageInput) {
     return this.lessonImageService.createLessonImage(createLessonInput);
   }
 
   @Mutation(() => LessonImage)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonImage(@Args('input') updateLessonInput: UpdateLessonImageInput) {
     return this.lessonImageService.updateLessonImage(updateLessonInput);
   }
 
   @Mutation(() => LessonImage)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLessonImage(
     @Args('input') deleteImageLessonInput: DeleteLessonImageInput,
   ) {

@@ -49,8 +49,7 @@ import { UserModule } from './user/user.module';
         },
         formatError: (error: GraphQLError) => {
           const graphQLFormattedError: GraphQLFormattedError = {
-            message:
-              error?.extensions?.exception?.response?.message || error?.message,
+            message: error?.extensions?.exception.code || error?.message,
           };
           return graphQLFormattedError;
         },

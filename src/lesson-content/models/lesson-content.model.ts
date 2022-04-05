@@ -47,8 +47,11 @@ export class LessonContentSentence {
   @Field(() => ID)
   id: string;
 
+  @Field({ nullable: true })
+  text?: string;
+
   @Field(() => [LessonContentSentencePart])
-  sentence: LessonContentSentencePart[];
+  sentenceParts?: LessonContentSentencePart[];
 
   @Field(() => LessonSentenceType)
   sentenceType: LessonSentenceType;
@@ -58,6 +61,9 @@ export class LessonContentSentence {
 export class LessonContent {
   @Field(() => ID)
   id: string;
+
+  @Field()
+  title: string;
 
   @Field(() => [LessonContentSentence])
   sentences: LessonContentSentence[];
