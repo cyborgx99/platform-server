@@ -1,4 +1,5 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
+import { IsString, MaxLength } from 'class-validator';
 
 import {
   LessonContent,
@@ -8,6 +9,8 @@ import {
 @InputType()
 export class CreateLessonContentInput {
   @Field()
+  @IsString()
+  @MaxLength(32)
   title: string;
 
   @Field(() => [LessonContentSentence])
@@ -24,4 +27,10 @@ export class GetLessonContentsResponse {
 
   @Field()
   pages: number;
+}
+
+@ObjectType()
+export class DeleteLessonContentResponse {
+  @Field(() => ID)
+  id: string;
 }
