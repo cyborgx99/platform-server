@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/dto/auth.roles.guard';
+import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 
 import { CloudinaryService } from './cloudinary.service';

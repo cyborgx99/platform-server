@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/dto/auth.roles.guard';
+import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserDecorator } from 'src/user/user.decorator';
 
