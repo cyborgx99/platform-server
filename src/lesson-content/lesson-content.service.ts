@@ -3,6 +3,7 @@ import { PrismaService } from 'src/database/prisma.service';
 
 import {
   CreateLessonContentInput,
+  DeleteLessonContentResponse,
   GetLessonContentsResponse,
 } from './dto/lesson-content.dto';
 import { LessonContent } from './models/lesson-content.model';
@@ -65,6 +66,15 @@ export class LessonContentService {
       data: parsedSentences,
       pages,
       totalCount: totalCount,
+    };
+  }
+
+  async deleteLessonContent(id: string): Promise<DeleteLessonContentResponse> {
+    const content = await this.prismaService.lessonContent.delete({
+      where: { id },
+    });
+    return {
+      id: content.id,
     };
   }
 }
