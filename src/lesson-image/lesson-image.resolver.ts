@@ -21,14 +21,18 @@ export class LessonImageResolver {
   @Mutation(() => LessonImage)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  createLessonImage(@Args('input') createLessonInput: CreateLessonImageInput) {
+  createLessonImage(
+    @Args('input') createLessonInput: CreateLessonImageInput,
+  ): Promise<LessonImage> {
     return this.lessonImageService.createLessonImage(createLessonInput);
   }
 
   @Mutation(() => LessonImage)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  updateLessonImage(@Args('input') updateLessonInput: UpdateLessonImageInput) {
+  updateLessonImage(
+    @Args('input') updateLessonInput: UpdateLessonImageInput,
+  ): Promise<LessonImage> {
     return this.lessonImageService.updateLessonImage(updateLessonInput);
   }
 
