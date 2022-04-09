@@ -1,7 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
+import { lessonImages } from './seeds/lessonImages';
 import { users } from './seeds/users';
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -15,6 +17,9 @@ async function main() {
 
   await prisma.user.createMany({
     data: usersWithHashedPassword,
+  });
+  await prisma.lessonImage.createMany({
+    data: lessonImages,
   });
 }
 
