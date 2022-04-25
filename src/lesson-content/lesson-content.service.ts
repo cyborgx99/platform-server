@@ -5,6 +5,7 @@ import {
   CreateLessonContentInput,
   DeleteLessonContentResponse,
   GetLessonContentsResponse,
+  UpdateLessonContentInput,
 } from './dto/lesson-content.dto';
 import { LessonContent } from './models/lesson-content.model';
 
@@ -75,6 +76,25 @@ export class LessonContentService {
     });
     return {
       id: content.id,
+    };
+  }
+
+  async updateLessonContent(
+    data: UpdateLessonContentInput,
+  ): Promise<LessonContent> {
+    const stringified = JSON.stringify(data.sentences);
+
+    const content = await this.prismaService.lessonContent.update({
+      where: {
+        id: data.id,
+      },
+      data: { sentences: stringified, title: data.title },
+    });
+
+    return {
+      id: content.id,
+      sentences: JSON.parse(content.sentences),
+      title: content.title,
     };
   }
 }

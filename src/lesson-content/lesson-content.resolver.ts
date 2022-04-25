@@ -9,6 +9,7 @@ import {
   CreateLessonContentInput,
   DeleteLessonContentResponse,
   GetLessonContentsResponse,
+  UpdateLessonContentInput,
 } from './dto/lesson-content.dto';
 import { LessonContentService } from './lesson-content.service';
 import { LessonContent } from './models/lesson-content.model';
@@ -46,5 +47,16 @@ export class LessonContentResolver {
     @Args('id') id: string,
   ): Promise<DeleteLessonContentResponse> {
     return this.lessonContentService.deleteLessonContent(id);
+  }
+
+  @Mutation(() => LessonContent)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  updateLessonContent(
+    @Args('input') updateLessonContentInput: UpdateLessonContentInput,
+  ) {
+    return this.lessonContentService.updateLessonContent(
+      updateLessonContentInput,
+    );
   }
 }

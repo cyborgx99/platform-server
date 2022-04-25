@@ -27,14 +27,14 @@ export const users: Prisma.UserCreateInput[] = [
     password: '123qwe',
   },
   {
-    name: 'Tiny',
-    lastName: 'Ben',
+    name: 'Samuel',
+    lastName: 'Jackson',
     email: 'cyborgx999+4@gmail.com',
     password: '123qwe',
   },
   {
-    name: 'What',
-    lastName: 'Who',
+    name: 'Jordan',
+    lastName: 'Belfort',
     email: 'cyborgx999+5@gmail.com',
     password: '123qwe',
   },

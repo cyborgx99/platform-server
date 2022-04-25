@@ -1,4 +1,4 @@
-import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
 import { IsString, MaxLength } from 'class-validator';
 
 import {
@@ -15,6 +15,14 @@ export class CreateLessonContentInput {
 
   @Field(() => [LessonContentSentence])
   sentences: LessonContentSentence[];
+}
+
+@InputType()
+export class UpdateLessonContentInput extends PartialType(
+  CreateLessonContentInput,
+) {
+  @Field(() => ID)
+  id: string;
 }
 
 @ObjectType()
