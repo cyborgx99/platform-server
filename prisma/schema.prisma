@@ -52,7 +52,7 @@ model LessonImage {
   url String
   publicId String?
   title String
-  lesson Lesson?
+  pages LessonPage[]
 }
 
 
@@ -60,19 +60,34 @@ model LessonContent {
   id  String  @id @default(uuid())
   title String
   sentences String //JSON String
-  lessons Lesson[]
+  pages LessonPage[]
 }
 
 model Lesson {
   id String @id @default(uuid())
-  image LessonImage @relation(fields: [imageId], references: [id])
-  imageId String
   title String
   description String
-  content LessonContent[]
+  pages LessonPage[]
   classrooms Classroom[]
   createdAt DateTime @default(now())
 }
+
+
+model LessonPage {
+  lessonImage LessonImage @relation(fields: [lessonImageId], references: [id])
+  lessonImageId String
+
+  lessonContent LessonContent @relation(fields: [lessonContentId], references: [id])
+  lessonContentId String
+
+  lesson Lesson @relation(fields: [lessonId], references: [id])
+  lessonId String
+
+   @@id([lessonImageId, lessonContentId, lessonId])
+}
+
+
+
 
 model Classroom {
   id String @id @default(uuid())

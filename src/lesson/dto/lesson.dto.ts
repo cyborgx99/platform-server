@@ -1,6 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
+export class LessonPage {
+  @Field()
+  lessonImageId: string;
+
+  @Field()
+  lessonContentId: string;
+}
+
+@InputType()
 export class CreateLessonInput {
   @Field()
   imageId: string;
@@ -11,6 +20,6 @@ export class CreateLessonInput {
   @Field()
   description: string;
 
-  @Field()
-  content: string;
+  @Field(() => [LessonPage], { nullable: 'items' })
+  pages: LessonPage;
 }
