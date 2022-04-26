@@ -33,6 +33,7 @@ import { UserModule } from './user/user.module';
         autoSchemaFile: true,
         subscriptions: {
           'graphql-ws': true,
+          'subscriptions-transport-ws': true, //dev
         },
         context: ({ req, res }: { req: Request; res: Response }) => {
           return {
