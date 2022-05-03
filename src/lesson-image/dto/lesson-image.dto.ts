@@ -1,7 +1,22 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  PartialType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { LessonImage } from '../models/lesson-image.model';
 
+export enum SortOrder {
+  asc = 'asc',
+  desc = 'desc',
+}
+
+registerEnumType(SortOrder, {
+  name: 'SortOrder',
+});
 @InputType()
 export class CreateLessonImageInput {
   @Field()
@@ -32,7 +47,7 @@ export class UpdateLessonImageInput extends PartialType(
 }
 @ObjectType()
 export class GetLessonImagesResponse {
-  @Field(() => [LessonImage], { nullable: 'items' })
+  @Field(() => [LessonImage])
   data: LessonImage[];
 
   @Field()
@@ -40,4 +55,21 @@ export class GetLessonImagesResponse {
 
   @Field()
   pages: number;
+}
+
+export class LessomImagesWhereOptions {
+  OR: (
+    | {
+        title: {
+          startsWith: string;
+          mode: 'insensitive';
+        };
+      }
+    | {
+        title: {
+          endsWith: string;
+          mode: 'insensitive';
+        };
+      }
+  )[];
 }

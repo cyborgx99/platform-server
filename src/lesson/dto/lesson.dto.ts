@@ -1,6 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
-@InputType()
+@InputType('LessonPageInput')
+@ObjectType()
 export class LessonPage {
   @Field()
   lessonImageId: string;
@@ -11,9 +12,6 @@ export class LessonPage {
 
 @InputType()
 export class CreateLessonInput {
-  @Field()
-  imageId: string;
-
   @Field()
   title: string;
 
