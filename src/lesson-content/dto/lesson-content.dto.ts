@@ -35,6 +35,9 @@ export class GetLessonContentsResponse {
 
   @Field()
   pages: number;
+
+  @Field()
+  hasMore: boolean;
 }
 
 @ObjectType()

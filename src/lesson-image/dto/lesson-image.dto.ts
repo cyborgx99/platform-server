@@ -55,21 +55,7 @@ export class GetLessonImagesResponse {
 
   @Field()
   pages: number;
-}
 
-export class LessomImagesWhereOptions {
-  OR: (
-    | {
-        title: {
-          startsWith: string;
-          mode: 'insensitive';
-        };
-      }
-    | {
-        title: {
-          endsWith: string;
-          mode: 'insensitive';
-        };
-      }
-  )[];
+  @Field()
+  hasMore: boolean;
 }
