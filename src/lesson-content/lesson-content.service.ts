@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
 import {
@@ -34,26 +35,30 @@ export class LessonContentService {
     limit: number,
     search: string,
   ): Promise<GetLessonContentsResponse> {
+    const whereOptions: Prisma.LessonContentWhereInput = {
+      OR: [
+        {
+          title: {
+            startsWith: search,
+            mode: 'insensitive',
+          },
+        },
+        { title: { endsWith: search, mode: 'insensitive' } },
+      ],
+    };
+
     const [lessonContent, totalCount] = await this.prismaService.$transaction([
       this.prismaService.lessonContent.findMany({
         take: limit,
         skip: offset ?? 0,
-        where: {
-          OR: [
-            {
-              title: {
-                startsWith: search,
-                mode: 'insensitive',
-              },
-            },
-            { title: { endsWith: search, mode: 'insensitive' } },
-          ],
-        },
+        where: whereOptions,
       }),
-      this.prismaService.lessonImage.count(),
+      this.prismaService.lessonContent.count({ where: whereOptions }),
     ]);
 
     const pages = Math.ceil(totalCount / limit);
+
+    const hasMore = offset < totalCount;
 
     const parsedSentences = lessonContent.map<LessonContent>((content) => {
       return {
@@ -66,7 +71,8 @@ export class LessonContentService {
     return {
       data: parsedSentences,
       pages,
-      totalCount: totalCount,
+      totalCount,
+      hasMore,
     };
   }
 

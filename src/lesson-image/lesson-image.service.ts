@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LessonImage } from '@prisma/client';
+import { LessonImage, Prisma } from '@prisma/client';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/database/prisma.service';
 
@@ -7,7 +7,6 @@ import {
   CreateLessonImageInput,
   DeleteLessonImageInput,
   GetLessonImagesResponse,
-  LessomImagesWhereOptions,
   SortOrder,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
@@ -56,7 +55,7 @@ export class LessonImageService {
     search: string,
     sortOrder: SortOrder = SortOrder.asc,
   ): Promise<GetLessonImagesResponse> {
-    const whereOptions: LessomImagesWhereOptions = {
+    const whereOptions: Prisma.LessonImageWhereInput = {
       OR: [
         {
           title: {
@@ -82,10 +81,13 @@ export class LessonImageService {
 
     const pages = Math.ceil(totalLessonImages / limit);
 
+    const hasMore = offset < totalLessonImages;
+
     return {
       data: lessonImages,
       pages,
       totalCount: totalLessonImages,
+      hasMore,
     };
   }
 }
