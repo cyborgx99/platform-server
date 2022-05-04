@@ -9,6 +9,7 @@ import {
   CreateLessonImageInput,
   DeleteLessonImageInput,
   GetLessonImagesResponse,
+  SortOrder,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
 import { LessonImageService } from './lesson-image.service';
@@ -52,7 +53,14 @@ export class LessonImageResolver {
     @Args('offset') offset: number,
     @Args('limit') limit: number,
     @Args('search', { nullable: true }) search?: string,
+    @Args('sortOrder', { nullable: true, type: () => SortOrder })
+    sortOrder?: SortOrder,
   ): Promise<GetLessonImagesResponse> {
-    return this.lessonImageService.getLessonImages(offset, limit, search);
+    return this.lessonImageService.getLessonImages(
+      offset,
+      limit,
+      search,
+      sortOrder,
+    );
   }
 }

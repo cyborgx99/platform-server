@@ -1,13 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { LessonImage } from 'src/lesson-image/models/lesson-image.model';
+
+import { LessonPage } from '../dto/lesson.dto';
 
 @ObjectType('Lesson')
 export class Lesson {
   @Field(() => ID)
   id: string;
-
-  @Field(() => LessonImage)
-  image: LessonImage;
 
   @Field()
   title: string;
@@ -15,8 +13,8 @@ export class Lesson {
   @Field()
   description: string;
 
-  @Field()
-  content: string;
+  @Field(() => [LessonPage], { nullable: 'items' })
+  pages: LessonPage;
 
   @Field(() => Date)
   createdAt: Date;

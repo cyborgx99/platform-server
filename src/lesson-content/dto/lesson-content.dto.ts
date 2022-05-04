@@ -27,7 +27,7 @@ export class UpdateLessonContentInput extends PartialType(
 
 @ObjectType()
 export class GetLessonContentsResponse {
-  @Field(() => [LessonContent], { nullable: 'items' })
+  @Field(() => [LessonContent])
   data: LessonContent[];
 
   @Field()

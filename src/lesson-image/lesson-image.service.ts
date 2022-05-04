@@ -7,6 +7,8 @@ import {
   CreateLessonImageInput,
   DeleteLessonImageInput,
   GetLessonImagesResponse,
+  LessomImagesWhereOptions,
+  SortOrder,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
 
@@ -52,24 +54,30 @@ export class LessonImageService {
     offset: number,
     limit: number,
     search: string,
+    sortOrder: SortOrder = SortOrder.asc,
   ): Promise<GetLessonImagesResponse> {
+    const whereOptions: LessomImagesWhereOptions = {
+      OR: [
+        {
+          title: {
+            startsWith: search,
+            mode: 'insensitive',
+          },
+        },
+        { title: { endsWith: search, mode: 'insensitive' } },
+      ],
+    };
+
     const [lessonImages, totalLessonImages] = await this.prisma.$transaction([
       this.prisma.lessonImage.findMany({
         take: limit,
         skip: offset ?? 0,
-        where: {
-          OR: [
-            {
-              title: {
-                startsWith: search,
-                mode: 'insensitive',
-              },
-            },
-            { title: { endsWith: search, mode: 'insensitive' } },
-          ],
+        orderBy: {
+          title: sortOrder,
         },
+        where: whereOptions,
       }),
-      this.prisma.lessonImage.count(),
+      this.prisma.lessonImage.count({ where: whereOptions }),
     ]);
 
     const pages = Math.ceil(totalLessonImages / limit);
