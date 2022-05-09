@@ -1,7 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-export const users: Prisma.UserCreateInput[] = [
+export const userId = 'cbea4e6a-814f-4673-8010-3099afbe7cd4';
+
+export const users: Prisma.UserCreateManyInput[] = [
   {
+    id: userId,
     name: 'Boris',
     lastName: 'Johnson',
     email: 'cyborgx999@gmail.com',
