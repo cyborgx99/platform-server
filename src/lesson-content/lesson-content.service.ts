@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { ApolloError } from 'apollo-server-express';
+import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
 
 import {
@@ -16,11 +18,12 @@ export class LessonContentService {
 
   async createLessonContent(
     data: CreateLessonContentInput,
+    userId: string,
   ): Promise<LessonContent> {
     const stringified = JSON.stringify(data.sentences);
 
     const content = await this.prismaService.lessonContent.create({
-      data: { sentences: stringified, title: data.title },
+      data: { sentences: stringified, title: data.title, userId },
     });
 
     return {
@@ -33,6 +36,7 @@ export class LessonContentService {
   async getLessonContents(
     offset: number,
     limit: number,
+    userId: string,
     search: string,
   ): Promise<GetLessonContentsResponse> {
     const whereOptions: Prisma.LessonContentWhereInput = {
@@ -42,8 +46,9 @@ export class LessonContentService {
             startsWith: search,
             mode: 'insensitive',
           },
+          userId,
         },
-        { title: { endsWith: search, mode: 'insensitive' } },
+        { title: { endsWith: search, mode: 'insensitive' }, userId },
       ],
     };
 
@@ -76,21 +81,47 @@ export class LessonContentService {
     };
   }
 
-  async deleteLessonContent(id: string): Promise<DeleteLessonContentResponse> {
-    const content = await this.prismaService.lessonContent.delete({
-      where: { id },
+  async deleteLessonContent(
+    id: string,
+    userId: string,
+  ): Promise<DeleteLessonContentResponse> {
+    const content = await this.prismaService.lessonContent.findFirst({
+      where: { id, userId },
     });
+
+    if (content.userId !== userId) {
+      throw new ApolloError(Error_Codes.Unathorized);
+    }
+
+    const deleted = await this.prismaService.lessonContent.delete({
+      where: {
+        id,
+      },
+    });
+
     return {
-      id: content.id,
+      id: deleted.id,
     };
   }
 
   async updateLessonContent(
     data: UpdateLessonContentInput,
+    userId: string,
   ): Promise<LessonContent> {
     const stringified = JSON.stringify(data.sentences);
 
-    const content = await this.prismaService.lessonContent.update({
+    const found = await this.prismaService.lessonContent.findFirst({
+      where: {
+        id: data.id,
+        userId,
+      },
+    });
+
+    if (found.userId !== userId) {
+      throw new ApolloError(Error_Codes.Unathorized);
+    }
+
+    const updatedContent = await this.prismaService.lessonContent.update({
       where: {
         id: data.id,
       },
@@ -98,9 +129,9 @@ export class LessonContentService {
     });
 
     return {
-      id: content.id,
-      sentences: JSON.parse(content.sentences),
-      title: content.title,
+      id: updatedContent.id,
+      sentences: JSON.parse(updatedContent.sentences),
+      title: updatedContent.title,
     };
   }
 }

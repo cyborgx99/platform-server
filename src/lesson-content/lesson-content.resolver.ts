@@ -4,6 +4,8 @@ import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { UserDecorator } from 'src/user/user.decorator';
 
 import {
   CreateLessonContentInput,
@@ -23,9 +25,11 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonContent(
     @Args('input') createLessonContentInput: CreateLessonContentInput,
+    @UserDecorator() user: UserWithoutPassword,
   ): Promise<LessonContent> {
     return this.lessonContentService.createLessonContent(
       createLessonContentInput,
+      user.id,
     );
   }
 
@@ -35,9 +39,15 @@ export class LessonContentResolver {
   getLessonContents(
     @Args('offset') offset: number,
     @Args('limit') limit: number,
+    @UserDecorator() user: UserWithoutPassword,
     @Args('search', { nullable: true }) search?: string,
   ): Promise<GetLessonContentsResponse> {
-    return this.lessonContentService.getLessonContents(offset, limit, search);
+    return this.lessonContentService.getLessonContents(
+      offset,
+      limit,
+      user.id,
+      search,
+    );
   }
 
   @Mutation(() => DeleteLessonContentResponse)
@@ -45,8 +55,9 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLessonContent(
     @Args('id') id: string,
+    @UserDecorator() user: UserWithoutPassword,
   ): Promise<DeleteLessonContentResponse> {
-    return this.lessonContentService.deleteLessonContent(id);
+    return this.lessonContentService.deleteLessonContent(id, user.id);
   }
 
   @Mutation(() => LessonContent)
@@ -54,9 +65,11 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonContent(
     @Args('input') updateLessonContentInput: UpdateLessonContentInput,
+    @UserDecorator() user: UserWithoutPassword,
   ) {
     return this.lessonContentService.updateLessonContent(
       updateLessonContentInput,
+      user.id,
     );
   }
 }
