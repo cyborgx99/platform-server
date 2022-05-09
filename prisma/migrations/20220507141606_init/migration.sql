@@ -35,6 +35,7 @@ CREATE TABLE "LessonImage" (
     "url" TEXT NOT NULL,
     "publicId" TEXT,
     "title" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "LessonImage_pkey" PRIMARY KEY ("id")
 );
@@ -44,6 +45,7 @@ CREATE TABLE "LessonContent" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "sentences" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "LessonContent_pkey" PRIMARY KEY ("id")
 );
@@ -51,12 +53,21 @@ CREATE TABLE "LessonContent" (
 -- CreateTable
 CREATE TABLE "Lesson" (
     "id" TEXT NOT NULL,
-    "imageId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Lesson_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LessonPage" (
+    "lessonImageId" TEXT NOT NULL,
+    "lessonContentId" TEXT NOT NULL,
+    "lessonId" TEXT NOT NULL,
+
+    CONSTRAINT "LessonPage_pkey" PRIMARY KEY ("lessonImageId","lessonContentId","lessonId")
 );
 
 -- CreateTable
@@ -70,38 +81,32 @@ CREATE TABLE "Classroom" (
     CONSTRAINT "Classroom_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "_LessonToLessonContent" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Lesson_imageId_key" ON "Lesson"("imageId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_LessonToLessonContent_AB_unique" ON "_LessonToLessonContent"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_LessonToLessonContent_B_index" ON "_LessonToLessonContent"("B");
 
 -- AddForeignKey
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Lesson" ADD CONSTRAINT "Lesson_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "LessonImage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LessonImage" ADD CONSTRAINT "LessonImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LessonContent" ADD CONSTRAINT "LessonContent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Lesson" ADD CONSTRAINT "Lesson_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LessonPage" ADD CONSTRAINT "LessonPage_lessonImageId_fkey" FOREIGN KEY ("lessonImageId") REFERENCES "LessonImage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LessonPage" ADD CONSTRAINT "LessonPage_lessonContentId_fkey" FOREIGN KEY ("lessonContentId") REFERENCES "LessonContent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LessonPage" ADD CONSTRAINT "LessonPage_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Classroom" ADD CONSTRAINT "Classroom_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Classroom" ADD CONSTRAINT "Classroom_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_LessonToLessonContent" ADD FOREIGN KEY ("A") REFERENCES "Lesson"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_LessonToLessonContent" ADD FOREIGN KEY ("B") REFERENCES "LessonContent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
