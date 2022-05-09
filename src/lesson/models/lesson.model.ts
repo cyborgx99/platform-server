@@ -1,9 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { LessonPage } from '../dto/lesson.dto';
+import { LessonPageObject } from '../dto/lesson.dto';
 
 @ObjectType('Lesson')
-export class Lesson {
+export class LessonModel {
   @Field(() => ID)
   id: string;
 
@@ -13,8 +13,8 @@ export class Lesson {
   @Field()
   description: string;
 
-  @Field(() => [LessonPage], { nullable: 'items' })
-  pages: LessonPage;
+  @Field(() => [LessonPageObject], { nullable: 'items' })
+  pages: LessonPageObject[];
 
   @Field(() => Date)
   createdAt: Date;
