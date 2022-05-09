@@ -1,14 +1,47 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Role } from '@prisma/client';
+import { GqlAuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
+import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { UserDecorator } from 'src/user/user.decorator';
 
-import { CreateLessonInput } from './dto/lesson.dto';
+import { CreateLessonInput, GetLessonsResponse } from './dto/lesson.dto';
 import { LessonService } from './lesson.service';
-import { Lesson } from './models/lesson.model';
+import { LessonModel } from './models/lesson.model';
 
 @Resolver()
 export class LessonResolver {
   constructor(private readonly lessonService: LessonService) {}
-  @Mutation(() => Lesson)
-  createLesson(@Args('input') createLessonInput: CreateLessonInput) {
-    return this.lessonService.createLesson(createLessonInput);
+  @Mutation(() => LessonModel)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  createLesson(
+    @Args('input') createLessonInput: CreateLessonInput,
+    @UserDecorator() user: UserWithoutPassword,
+  ): Promise<LessonModel> {
+    return this.lessonService.createLesson(createLessonInput, user.id);
+  }
+
+  @Query(() => GetLessonsResponse)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  getLessons(
+    @Args('offset') offset: number,
+    @Args('limit') limit: number,
+    @UserDecorator() user: UserWithoutPassword,
+    @Args('search', { nullable: true }) search?: string,
+    @Args('sortOrder', { nullable: true })
+    sortOrder?: SortOrder,
+  ) {
+    return this.lessonService.getLessons(
+      offset,
+      limit,
+      user.id,
+      search,
+      sortOrder,
+    );
   }
 }

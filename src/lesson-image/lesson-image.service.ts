@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LessonImage, Prisma } from '@prisma/client';
+import { ApolloError } from 'apollo-server-express';
+import { Error_Codes } from 'src/app.types';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/database/prisma.service';
 
@@ -18,13 +20,30 @@ export class LessonImageService {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  async createLessonImage(data: CreateLessonImageInput): Promise<LessonImage> {
+  async createLessonImage(
+    data: CreateLessonImageInput,
+    userId: string,
+  ): Promise<LessonImage> {
     return this.prisma.lessonImage.create({
-      data,
+      data: {
+        ...data,
+        userId,
+      },
     });
   }
 
-  async deleteLessonImage(data: DeleteLessonImageInput): Promise<LessonImage> {
+  async deleteLessonImage(
+    data: DeleteLessonImageInput,
+    userId: string,
+  ): Promise<LessonImage> {
+    const image = await this.prisma.lessonImage.findFirst({
+      where: { id: data.id, userId },
+    });
+
+    if (image.userId !== userId) {
+      throw new ApolloError(Error_Codes.Unathorized);
+    }
+
     if (data.publicId) {
       await this.cloudinary.deleteImage(data.publicId);
     }
@@ -32,13 +51,20 @@ export class LessonImageService {
     return this.prisma.lessonImage.delete({ where: { id: data.id } });
   }
 
-  async updateLessonImage(data: UpdateLessonImageInput): Promise<LessonImage> {
-    const lessonImage = await this.prisma.lessonImage.findUnique({
-      where: { id: data.id },
+  async updateLessonImage(
+    data: UpdateLessonImageInput,
+    userId: string,
+  ): Promise<LessonImage> {
+    const image = await this.prisma.lessonImage.findFirst({
+      where: { id: data.id, userId },
     });
 
-    if (lessonImage.publicId) {
-      await this.cloudinary.deleteImage(lessonImage.publicId);
+    if (image.userId !== userId) {
+      throw new ApolloError(Error_Codes.Unathorized);
+    }
+
+    if (image.publicId) {
+      await this.cloudinary.deleteImage(image.publicId);
     }
 
     return this.prisma.lessonImage.update({
@@ -52,6 +78,7 @@ export class LessonImageService {
   async getLessonImages(
     offset: number,
     limit: number,
+    userId: string,
     search: string,
     sortOrder: SortOrder = SortOrder.asc,
   ): Promise<GetLessonImagesResponse> {
@@ -62,8 +89,9 @@ export class LessonImageService {
             startsWith: search,
             mode: 'insensitive',
           },
+          userId,
         },
-        { title: { endsWith: search, mode: 'insensitive' } },
+        { title: { endsWith: search, mode: 'insensitive' }, userId },
       ],
     };
 

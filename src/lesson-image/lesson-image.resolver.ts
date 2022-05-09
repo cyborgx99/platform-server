@@ -4,6 +4,8 @@ import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { UserDecorator } from 'src/user/user.decorator';
 
 import {
   CreateLessonImageInput,
@@ -24,8 +26,12 @@ export class LessonImageResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonImage(
     @Args('input') createLessonInput: CreateLessonImageInput,
+    @UserDecorator() user: UserWithoutPassword,
   ): Promise<LessonImage> {
-    return this.lessonImageService.createLessonImage(createLessonInput);
+    return this.lessonImageService.createLessonImage(
+      createLessonInput,
+      user.id,
+    );
   }
 
   @Mutation(() => LessonImage)
@@ -33,8 +39,12 @@ export class LessonImageResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonImage(
     @Args('input') updateLessonInput: UpdateLessonImageInput,
+    @UserDecorator() user: UserWithoutPassword,
   ): Promise<LessonImage> {
-    return this.lessonImageService.updateLessonImage(updateLessonInput);
+    return this.lessonImageService.updateLessonImage(
+      updateLessonInput,
+      user.id,
+    );
   }
 
   @Mutation(() => LessonImage)
@@ -42,8 +52,12 @@ export class LessonImageResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLessonImage(
     @Args('input') deleteImageLessonInput: DeleteLessonImageInput,
+    @UserDecorator() user: UserWithoutPassword,
   ): Promise<LessonImage> {
-    return this.lessonImageService.deleteLessonImage(deleteImageLessonInput);
+    return this.lessonImageService.deleteLessonImage(
+      deleteImageLessonInput,
+      user.id,
+    );
   }
 
   @Query(() => GetLessonImagesResponse)
@@ -52,6 +66,7 @@ export class LessonImageResolver {
   getLessonImages(
     @Args('offset') offset: number,
     @Args('limit') limit: number,
+    @UserDecorator() user: UserWithoutPassword,
     @Args('search', { nullable: true }) search?: string,
     @Args('sortOrder', { nullable: true, type: () => SortOrder })
     sortOrder?: SortOrder,
@@ -59,6 +74,7 @@ export class LessonImageResolver {
     return this.lessonImageService.getLessonImages(
       offset,
       limit,
+      user.id,
       search,
       sortOrder,
     );

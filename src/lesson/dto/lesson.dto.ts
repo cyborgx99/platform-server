@@ -1,13 +1,25 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import { LessonContent } from 'src/lesson-content/models/lesson-content.model';
+import { LessonImage } from 'src/lesson-image/models/lesson-image.model';
+
+import { LessonModel } from '../models/lesson.model';
 
 @InputType('LessonPageInput')
-@ObjectType()
 export class LessonPage {
   @Field()
   lessonImageId: string;
 
   @Field()
   lessonContentId: string;
+}
+
+@ObjectType('LessonPageObject')
+export class LessonPageObject {
+  @Field(() => LessonImage)
+  lessonImage: LessonImage;
+
+  @Field(() => LessonContent)
+  lessonContent: LessonContent;
 }
 
 @InputType()
@@ -19,5 +31,26 @@ export class CreateLessonInput {
   description: string;
 
   @Field(() => [LessonPage], { nullable: 'items' })
-  pages: LessonPage;
+  pages: LessonPage[];
+}
+
+@InputType()
+export class UpdateLessonInput extends PartialType(CreateLessonInput) {
+  @Field(() => ID)
+  id: string;
+}
+
+@ObjectType()
+export class GetLessonsResponse {
+  @Field(() => [LessonModel])
+  data: LessonModel[];
+
+  @Field()
+  totalCount: number;
+
+  @Field()
+  pages: number;
+
+  @Field()
+  hasMore: boolean;
 }

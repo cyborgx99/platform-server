@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Lesson } from 'src/lesson/models/lesson.model';
+import { LessonModel } from 'src/lesson/models/lesson.model';
 
 @ObjectType()
 export class LessonImage {
@@ -15,6 +15,6 @@ export class LessonImage {
   @Field(() => String, { nullable: true })
   publicId?: string;
 
-  @Field(() => Lesson, { nullable: true })
-  lesson?: Lesson;
+  @Field(() => LessonModel, { nullable: true })
+  lesson?: LessonModel;
 }
