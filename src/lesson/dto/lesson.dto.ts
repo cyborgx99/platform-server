@@ -7,6 +7,9 @@ import { LessonModel } from '../models/lesson.model';
 @InputType('LessonPageInput')
 export class LessonPage {
   @Field()
+  id: string;
+
+  @Field()
   lessonImageId: string;
 
   @Field()
@@ -15,6 +18,9 @@ export class LessonPage {
 
 @ObjectType('LessonPageObject')
 export class LessonPageObject {
+  @Field(() => ID)
+  id: string;
+
   @Field(() => LessonImage)
   lessonImage: LessonImage;
 
@@ -53,4 +59,10 @@ export class GetLessonsResponse {
 
   @Field()
   hasMore: boolean;
+}
+
+@ObjectType()
+export class DeleteLessonResponse {
+  @Field(() => ID)
+  id: string;
 }

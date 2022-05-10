@@ -6,6 +6,7 @@ import { LessonModel } from './models/lesson.model';
 export const parseContentSentenceInLessons = (
   lessons: (Lesson & {
     pages: (LessonPage & {
+      id: string;
       lessonImage: LessonImage;
       lessonContent: LessonContent;
     })[];
