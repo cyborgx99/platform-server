@@ -83,6 +83,8 @@ model Lesson {
 
 
 model LessonPage {
+  id         String @id @default(uuid())
+
   lessonImage LessonImage @relation(fields: [lessonImageId], references: [id])
   lessonImageId String
 
@@ -91,8 +93,6 @@ model LessonPage {
 
   lesson Lesson @relation(fields: [lessonId], references: [id])
   lessonId String
-
-   @@id([lessonImageId, lessonContentId, lessonId])
 }
 
 

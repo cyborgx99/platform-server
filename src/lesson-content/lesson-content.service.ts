@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
 import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
+import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
 
 import {
   CreateLessonContentInput,
@@ -38,6 +39,7 @@ export class LessonContentService {
     limit: number,
     userId: string,
     search: string,
+    sortOrder: SortOrder,
   ): Promise<GetLessonContentsResponse> {
     const whereOptions: Prisma.LessonContentWhereInput = {
       OR: [
@@ -56,6 +58,9 @@ export class LessonContentService {
       this.prismaService.lessonContent.findMany({
         take: limit,
         skip: offset ?? 0,
+        orderBy: {
+          title: sortOrder,
+        },
         where: whereOptions,
       }),
       this.prismaService.lessonContent.count({ where: whereOptions }),

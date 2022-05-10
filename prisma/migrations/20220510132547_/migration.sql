@@ -63,11 +63,12 @@ CREATE TABLE "Lesson" (
 
 -- CreateTable
 CREATE TABLE "LessonPage" (
+    "id" TEXT NOT NULL,
     "lessonImageId" TEXT NOT NULL,
     "lessonContentId" TEXT NOT NULL,
     "lessonId" TEXT NOT NULL,
 
-    CONSTRAINT "LessonPage_pkey" PRIMARY KEY ("lessonImageId","lessonContentId","lessonId")
+    CONSTRAINT "LessonPage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable

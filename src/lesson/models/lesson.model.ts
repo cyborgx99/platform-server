@@ -13,7 +13,7 @@ export class LessonModel {
   @Field()
   description: string;
 
-  @Field(() => [LessonPageObject], { nullable: 'items' })
+  @Field(() => [LessonPageObject])
   pages: LessonPageObject[];
 
   @Field(() => Date)

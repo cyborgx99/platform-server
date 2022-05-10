@@ -8,7 +8,11 @@ import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
 import { UserDecorator } from 'src/user/user.decorator';
 
-import { CreateLessonInput, GetLessonsResponse } from './dto/lesson.dto';
+import {
+  CreateLessonInput,
+  DeleteLessonResponse,
+  GetLessonsResponse,
+} from './dto/lesson.dto';
 import { LessonService } from './lesson.service';
 import { LessonModel } from './models/lesson.model';
 
@@ -33,7 +37,7 @@ export class LessonResolver {
     @Args('limit') limit: number,
     @UserDecorator() user: UserWithoutPassword,
     @Args('search', { nullable: true }) search?: string,
-    @Args('sortOrder', { nullable: true })
+    @Args('sortOrder', { nullable: true, type: () => SortOrder })
     sortOrder?: SortOrder,
   ) {
     return this.lessonService.getLessons(
@@ -43,5 +47,15 @@ export class LessonResolver {
       search,
       sortOrder,
     );
+  }
+
+  @Mutation(() => DeleteLessonResponse)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  deleteLesson(
+    @Args('id') id: string,
+    @UserDecorator() user: UserWithoutPassword,
+  ): Promise<DeleteLessonResponse> {
+    return this.lessonService.deleteLesson(id, user.id);
   }
 }
