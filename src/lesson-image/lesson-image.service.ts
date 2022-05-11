@@ -40,7 +40,7 @@ export class LessonImageService {
       where: { id: data.id, userId },
     });
 
-    if (image.userId !== userId) {
+    if (!image || image.userId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
@@ -59,7 +59,7 @@ export class LessonImageService {
       where: { id: data.id, userId },
     });
 
-    if (image.userId !== userId) {
+    if (!image || image.userId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
@@ -109,7 +109,7 @@ export class LessonImageService {
 
     const pages = Math.ceil(totalLessonImages / limit);
 
-    const hasMore = offset < totalLessonImages;
+    const hasMore = offset < totalLessonImages && totalLessonImages > limit;
 
     return {
       data: lessonImages,

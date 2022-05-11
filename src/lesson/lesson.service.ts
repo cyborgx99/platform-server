@@ -9,10 +9,10 @@ import {
   CreateLessonInput,
   DeleteLessonResponse,
   GetLessonsResponse,
-  LessonPageObject,
+  UpdateLessonInput,
 } from './dto/lesson.dto';
 import { LessonModel } from './models/lesson.model';
-import { parseContentSentenceInLessons } from './utils';
+import { parseContentSentenceInLesson } from './utils';
 
 @Injectable()
 export class LessonService {
@@ -53,18 +53,60 @@ export class LessonService {
       },
     });
 
-    const lessonWithParcedContentSentences: LessonModel = {
-      ...lesson,
-      pages: lesson.pages.map<LessonPageObject>((page) => {
-        return {
-          ...page,
-          lessonContent: {
-            ...page.lessonContent,
-            sentences: JSON.parse(page.lessonContent.sentences),
+    const lessonWithParcedContentSentences: LessonModel =
+      parseContentSentenceInLesson(lesson);
+
+    return lessonWithParcedContentSentences;
+  }
+
+  async updateLesson(
+    data: UpdateLessonInput,
+    userId: string,
+  ): Promise<LessonModel> {
+    const lesson = await this.prismaService.lesson.findFirst({
+      where: { id: data.id, userId },
+    });
+
+    if (!lesson || lesson.userId !== userId) {
+      throw new ApolloError(Error_Codes.CannotUpdate);
+    }
+
+    const lessonToUpdate = await this.prismaService.lesson.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        description: data.description,
+        title: data.title,
+        pages: {
+          deleteMany: {},
+          create: data.pages.map((page) => ({
+            id: page.id,
+            lessonImage: {
+              connect: {
+                id: page.lessonImageId,
+              },
+            },
+            lessonContent: {
+              connect: {
+                id: page.lessonContentId,
+              },
+            },
+          })),
+        },
+      },
+      include: {
+        pages: {
+          include: {
+            lessonContent: true,
+            lessonImage: true,
           },
-        };
-      }),
-    };
+        },
+      },
+    });
+
+    const lessonWithParcedContentSentences: LessonModel =
+      parseContentSentenceInLesson(lessonToUpdate);
 
     return lessonWithParcedContentSentences;
   }
@@ -111,10 +153,13 @@ export class LessonService {
 
     const pages = Math.ceil(totalCount / limit);
 
-    const hasMore = offset < totalCount;
+    const hasMore = offset < totalCount && totalCount > limit;
 
-    const lessonsWithParcedContentSentences =
-      parseContentSentenceInLessons(lessons);
+    const lessonsWithParcedContentSentences: LessonModel[] = lessons.map(
+      (lesson) => {
+        return parseContentSentenceInLesson(lesson);
+      },
+    );
 
     return {
       data: lessonsWithParcedContentSentences,
@@ -132,7 +177,7 @@ export class LessonService {
       where: { id, userId },
     });
 
-    if (lesson.userId !== userId) {
+    if (!lesson || lesson.userId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
