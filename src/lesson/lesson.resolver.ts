@@ -12,6 +12,7 @@ import {
   CreateLessonInput,
   DeleteLessonResponse,
   GetLessonsResponse,
+  UpdateLessonInput,
 } from './dto/lesson.dto';
 import { LessonService } from './lesson.service';
 import { LessonModel } from './models/lesson.model';
@@ -19,6 +20,7 @@ import { LessonModel } from './models/lesson.model';
 @Resolver()
 export class LessonResolver {
   constructor(private readonly lessonService: LessonService) {}
+
   @Mutation(() => LessonModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
@@ -27,6 +29,16 @@ export class LessonResolver {
     @UserDecorator() user: UserWithoutPassword,
   ): Promise<LessonModel> {
     return this.lessonService.createLesson(createLessonInput, user.id);
+  }
+
+  @Mutation(() => LessonModel)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  updateLesson(
+    @Args('input') updateLessonInput: UpdateLessonInput,
+    @UserDecorator() user: UserWithoutPassword,
+  ): Promise<LessonModel> {
+    return this.lessonService.updateLesson(updateLessonInput, user.id);
   }
 
   @Query(() => GetLessonsResponse)

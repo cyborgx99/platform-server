@@ -6,4 +6,5 @@ export enum Error_Codes {
   NetworkError = 'NETWORK_ERROR',
   SomethingWentWrong = 'SOMETHING_WENT_WRONG',
   InvalidOrExpired = 'InvalidOrExpired',
+  CannotUpdate = 'CannotUpdate',
 }

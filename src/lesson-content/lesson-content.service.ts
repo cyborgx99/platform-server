@@ -68,7 +68,7 @@ export class LessonContentService {
 
     const pages = Math.ceil(totalCount / limit);
 
-    const hasMore = offset < totalCount;
+    const hasMore = offset < totalCount && totalCount > limit;
 
     const parsedSentences = lessonContent.map<LessonContent>((content) => {
       return {
@@ -94,7 +94,7 @@ export class LessonContentService {
       where: { id, userId },
     });
 
-    if (content.userId !== userId) {
+    if (!content || content.userId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
@@ -122,7 +122,7 @@ export class LessonContentService {
       },
     });
 
-    if (found.userId !== userId) {
+    if (!found || found.userId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
