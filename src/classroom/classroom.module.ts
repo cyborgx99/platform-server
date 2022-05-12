@@ -9,4 +9,4 @@ import { ClassroomService } from './classroom.service';
   providers: [ClassroomResolver, ClassroomService],
   imports: [PrismaModule, CloudinaryModule],
 })
-export class LessonImageModule {}
+export class ClassroomModule {}
