@@ -60,7 +60,6 @@ model LessonImage {
   userId   String
 }
 
-
 model LessonContent {
   id        String  @id @default(uuid())
   title     String
@@ -81,7 +80,6 @@ model Lesson {
   createdAt   DateTime @default(now())
 }
 
-
 model LessonPage {
   id         String @id @default(uuid())
 
@@ -95,15 +93,14 @@ model LessonPage {
   lessonId String
 }
 
-
-
-
 model Classroom {
   id        String @id @default(uuid())
+  title     String
   user      User @relation(fields: [userId], references: [id])
   userId    String 
   lesson    Lesson @relation(fields: [lessonId], references: [id])
   lessonId  String
+  studentId String?
   notes     String?
   createdAt DateTime @default(now())
 }

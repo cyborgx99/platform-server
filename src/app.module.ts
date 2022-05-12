@@ -9,6 +9,7 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { ClassroomModule } from './classroom/classroom.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { configValidationSchema } from './config.schema';
@@ -63,6 +64,7 @@ import { UserModule } from './user/user.module';
     MailModule,
     CloudinaryModule,
     LessonModule,
+    ClassroomModule,
     LessonImageModule,
     LessonContentModule,
   ],
