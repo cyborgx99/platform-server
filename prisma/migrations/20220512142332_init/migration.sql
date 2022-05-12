@@ -74,8 +74,10 @@ CREATE TABLE "LessonPage" (
 -- CreateTable
 CREATE TABLE "Classroom" (
     "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "lessonId" TEXT NOT NULL,
+    "studentId" TEXT,
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
