@@ -4,9 +4,13 @@ import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserDecorator } from 'src/user/user.decorator';
+import { UserDecorator } from 'src/common/decorators/user.decorator';
 
-import { GetUsersResponse, UserWithoutPassword } from './dto/user.dto';
+import {
+  GetUsersQueryArgs,
+  PaginatedUsers,
+  UserWithoutPassword,
+} from './dto/user.dto';
 import { User } from './models/user.model';
 import { UserService } from './user.service';
 
@@ -20,13 +24,10 @@ export class UserResolver {
     return user;
   }
 
-  @Query(() => GetUsersResponse)
+  @Query(() => PaginatedUsers)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  getUsers(
-    @Args('offset') offset: number,
-    @Args('limit') limit: number,
-  ): Promise<GetUsersResponse> {
-    return this.userService.getUsers(offset, limit);
+  getUsers(@Args() getUsersArgs: GetUsersQueryArgs): Promise<PaginatedUsers> {
+    return this.userService.getUsers(getUsersArgs);
   }
 }

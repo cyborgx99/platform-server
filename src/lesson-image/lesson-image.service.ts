@@ -8,8 +8,8 @@ import { PrismaService } from 'src/database/prisma.service';
 import {
   CreateLessonImageInput,
   DeleteLessonImageInput,
-  GetLessonImagesResponse,
-  SortOrder,
+  GetImagesQueryArgs,
+  PaginatedImagesResponse,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
 
@@ -76,12 +76,9 @@ export class LessonImageService {
   }
 
   async getLessonImages(
-    offset: number,
-    limit: number,
+    { offset, limit, search, sortOrder }: GetImagesQueryArgs,
     userId: string,
-    search: string,
-    sortOrder: SortOrder = SortOrder.asc,
-  ): Promise<GetLessonImagesResponse> {
+  ): Promise<PaginatedImagesResponse> {
     const whereOptions: Prisma.LessonImageWhereInput = {
       OR: [
         {

@@ -1,22 +1,18 @@
 import {
+  ArgsType,
   Field,
   ID,
   InputType,
   ObjectType,
   PartialType,
-  registerEnumType,
 } from '@nestjs/graphql';
+import {
+  PaginatedQueryArgs,
+  PaginatedResponse,
+} from 'src/common/dto/common.dto';
 
 import { LessonImage } from '../models/lesson-image.model';
 
-export enum SortOrder {
-  asc = 'asc',
-  desc = 'desc',
-}
-
-registerEnumType(SortOrder, {
-  name: 'SortOrder',
-});
 @InputType()
 export class CreateLessonImageInput {
   @Field()
@@ -46,16 +42,7 @@ export class UpdateLessonImageInput extends PartialType(
   id: string;
 }
 @ObjectType()
-export class GetLessonImagesResponse {
-  @Field(() => [LessonImage])
-  data: LessonImage[];
+export class PaginatedImagesResponse extends PaginatedResponse(LessonImage) {}
 
-  @Field()
-  totalCount: number;
-
-  @Field()
-  pages: number;
-
-  @Field()
-  hasMore: boolean;
-}
+@ArgsType()
+export class GetImagesQueryArgs extends PaginatedQueryArgs {}

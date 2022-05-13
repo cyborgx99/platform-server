@@ -1,19 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
-import { GetUsersResponse } from './dto/user.dto';
+import { GetUsersQueryArgs, PaginatedUsers } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUsers(offset: number, limit: number): Promise<GetUsersResponse> {
+  async getUsers({
+    limit,
+    offset,
+    search,
+    sortOrder,
+  }: GetUsersQueryArgs): Promise<PaginatedUsers> {
+    const whereOptions: Prisma.UserWhereInput = {
+      role: Role.USER,
+      OR: [
+        {
+          name: {
+            startsWith: search,
+            mode: 'insensitive',
+          },
+        },
+        { name: { endsWith: search, mode: 'insensitive' } },
+        {
+          lastName: {
+            startsWith: search,
+            mode: 'insensitive',
+          },
+        },
+        {
+          lastName: { endsWith: search, mode: 'insensitive' },
+        },
+      ],
+    };
+
     const [users, totalUsers] = await this.prisma.$transaction([
       this.prisma.user.findMany({
-        where: { role: Role.USER },
+        where: whereOptions,
         take: limit,
         skip: offset ?? 0,
+        orderBy: {
+          lastName: sortOrder,
+        },
         select: {
           password: false,
           lastName: true,
@@ -25,18 +55,18 @@ export class UserService {
         },
       }),
       this.prisma.user.count({
-        where: {
-          role: Role.USER,
-        },
+        where: whereOptions,
       }),
     ]);
 
     const pages = Math.ceil(totalUsers / limit);
+    const hasMore = offset < totalUsers && totalUsers > limit;
 
     return {
       data: users,
       pages,
       totalCount: totalUsers,
+      hasMore,
     };
   }
 }

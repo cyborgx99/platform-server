@@ -1,10 +1,18 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  ArgsType,
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  PartialType,
+} from '@nestjs/graphql';
+import { PaginatedQueryArgs } from 'src/common/dto/common.dto';
 import { LessonContent } from 'src/lesson-content/models/lesson-content.model';
 import { LessonImage } from 'src/lesson-image/models/lesson-image.model';
 
 import { LessonModel } from '../models/lesson.model';
 
-@InputType('LessonPageInput')
+@InputType()
 export class LessonPage {
   @Field()
   id: string;
@@ -16,7 +24,7 @@ export class LessonPage {
   lessonContentId: string;
 }
 
-@ObjectType('LessonPageObject')
+@ObjectType()
 export class LessonPageObject {
   @Field(() => ID)
   id: string;
@@ -47,7 +55,7 @@ export class UpdateLessonInput extends PartialType(CreateLessonInput) {
 }
 
 @ObjectType()
-export class GetLessonsResponse {
+export class PaginatedLessonsResponse {
   @Field(() => [LessonModel])
   data: LessonModel[];
 
@@ -60,6 +68,9 @@ export class GetLessonsResponse {
   @Field()
   hasMore: boolean;
 }
+
+@ArgsType()
+export class GetLessonsQueryArgs extends PaginatedQueryArgs {}
 
 @ObjectType()
 export class DeleteLessonResponse {

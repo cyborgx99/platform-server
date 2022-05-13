@@ -1,4 +1,15 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  ArgsType,
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  PartialType,
+} from '@nestjs/graphql';
+import {
+  PaginatedQueryArgs,
+  PaginatedResponse,
+} from 'src/common/dto/common.dto';
 
 import { ClassroomModel } from '../model/classroom.model';
 
@@ -37,6 +48,14 @@ export class GetClassroomsResponse {
   @Field()
   hasMore: boolean;
 }
+
+@ObjectType()
+export class PaginatedClassroomsResponse extends PaginatedResponse(
+  ClassroomModel,
+) {}
+
+@ArgsType()
+export class GetClassroomsQueryArgs extends PaginatedQueryArgs {}
 
 @ObjectType()
 export class DeleteClassroomResponse {

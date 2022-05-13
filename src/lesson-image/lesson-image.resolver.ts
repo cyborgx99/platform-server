@@ -4,14 +4,14 @@ import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
-import { UserDecorator } from 'src/user/user.decorator';
 
 import {
   CreateLessonImageInput,
   DeleteLessonImageInput,
-  GetLessonImagesResponse,
-  SortOrder,
+  GetImagesQueryArgs,
+  PaginatedImagesResponse,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
 import { LessonImageService } from './lesson-image.service';
@@ -60,23 +60,13 @@ export class LessonImageResolver {
     );
   }
 
-  @Query(() => GetLessonImagesResponse)
+  @Query(() => PaginatedImagesResponse)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   getLessonImages(
-    @Args('offset') offset: number,
-    @Args('limit') limit: number,
+    @Args() getImagesQueryArgs: GetImagesQueryArgs,
     @UserDecorator() user: UserWithoutPassword,
-    @Args('search', { nullable: true }) search?: string,
-    @Args('sortOrder', { nullable: true, type: () => SortOrder })
-    sortOrder?: SortOrder,
-  ): Promise<GetLessonImagesResponse> {
-    return this.lessonImageService.getLessonImages(
-      offset,
-      limit,
-      user.id,
-      search,
-      sortOrder,
-    );
+  ): Promise<PaginatedImagesResponse> {
+    return this.lessonImageService.getLessonImages(getImagesQueryArgs, user.id);
   }
 }

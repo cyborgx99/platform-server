@@ -1,5 +1,16 @@
-import { Field, ID, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  ArgsType,
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  PartialType,
+} from '@nestjs/graphql';
 import { IsString, MaxLength } from 'class-validator';
+import {
+  PaginatedQueryArgs,
+  PaginatedResponse,
+} from 'src/common/dto/common.dto';
 
 import {
   LessonContent,
@@ -26,19 +37,12 @@ export class UpdateLessonContentInput extends PartialType(
 }
 
 @ObjectType()
-export class GetLessonContentsResponse {
-  @Field(() => [LessonContent])
-  data: LessonContent[];
+export class PaginatedContentsResponse extends PaginatedResponse(
+  LessonContent,
+) {}
 
-  @Field()
-  totalCount: number;
-
-  @Field()
-  pages: number;
-
-  @Field()
-  hasMore: boolean;
-}
+@ArgsType()
+export class GetContentsQueryArgs extends PaginatedQueryArgs {}
 
 @ObjectType()
 export class DeleteLessonContentResponse {

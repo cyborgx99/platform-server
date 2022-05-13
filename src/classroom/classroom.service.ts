@@ -4,12 +4,12 @@ import { ApolloError } from 'apollo-server-express';
 import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
 import { parseContentSentenceInLesson } from 'src/lesson/utils';
-import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
 
 import {
   CreateClassroomInput,
   DeleteClassroomResponse,
-  GetClassroomsResponse,
+  GetClassroomsQueryArgs,
+  PaginatedClassroomsResponse,
   UpdateClassroomInput,
 } from './dto/clasroom.dto';
 import { ClassroomModel } from './model/classroom.model';
@@ -112,12 +112,9 @@ export class ClassroomService {
   }
 
   async getClassrooms(
-    offset: number,
-    limit: number,
+    { offset, limit, search, sortOrder }: GetClassroomsQueryArgs,
     userId: string,
-    search: string,
-    sortOrder: SortOrder,
-  ): Promise<GetClassroomsResponse> {
+  ): Promise<PaginatedClassroomsResponse> {
     const whereOptions: Prisma.ClassroomWhereInput = {
       OR: [
         {

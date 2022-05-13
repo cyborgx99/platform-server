@@ -1,24 +1,14 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { ArgsType, ObjectType } from '@nestjs/graphql';
+import {
+  PaginatedQueryArgs,
+  PaginatedResponse,
+} from 'src/common/dto/common.dto';
 
 import { User } from '../models/user.model';
 
 export type UserWithoutPassword = Omit<User, 'password' | 'resetToken'>;
-@InputType()
-export class GetUsersArgs {
-  @Field()
-  limit: number;
-
-  @Field({ nullable: true })
-  offset?: number;
-}
 @ObjectType()
-export class GetUsersResponse {
-  @Field(() => [User], { nullable: 'items' })
-  data: User[];
+export class PaginatedUsers extends PaginatedResponse(User) {}
 
-  @Field()
-  totalCount: number;
-
-  @Field()
-  pages: number;
-}
+@ArgsType()
+export class GetUsersQueryArgs extends PaginatedQueryArgs {}

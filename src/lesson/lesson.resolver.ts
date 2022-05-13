@@ -4,14 +4,14 @@ import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
+import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
-import { UserDecorator } from 'src/user/user.decorator';
 
 import {
   CreateLessonInput,
   DeleteLessonResponse,
-  GetLessonsResponse,
+  GetLessonsQueryArgs,
+  PaginatedLessonsResponse,
   UpdateLessonInput,
 } from './dto/lesson.dto';
 import { LessonService } from './lesson.service';
@@ -41,24 +41,14 @@ export class LessonResolver {
     return this.lessonService.updateLesson(updateLessonInput, user.id);
   }
 
-  @Query(() => GetLessonsResponse)
+  @Query(() => PaginatedLessonsResponse)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   getLessons(
-    @Args('offset') offset: number,
-    @Args('limit') limit: number,
+    @Args() getLessonsQueryArgs: GetLessonsQueryArgs,
     @UserDecorator() user: UserWithoutPassword,
-    @Args('search', { nullable: true }) search?: string,
-    @Args('sortOrder', { nullable: true, type: () => SortOrder })
-    sortOrder?: SortOrder,
-  ) {
-    return this.lessonService.getLessons(
-      offset,
-      limit,
-      user.id,
-      search,
-      sortOrder,
-    );
+  ): Promise<PaginatedLessonsResponse> {
+    return this.lessonService.getLessons(getLessonsQueryArgs, user.id);
   }
 
   @Mutation(() => DeleteLessonResponse)

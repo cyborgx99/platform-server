@@ -3,12 +3,12 @@ import { Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
 import { Error_Codes } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
-import { SortOrder } from 'src/lesson-image/dto/lesson-image.dto';
 
 import {
   CreateLessonInput,
   DeleteLessonResponse,
-  GetLessonsResponse,
+  GetLessonsQueryArgs,
+  PaginatedLessonsResponse,
   UpdateLessonInput,
 } from './dto/lesson.dto';
 import { LessonModel } from './models/lesson.model';
@@ -112,12 +112,9 @@ export class LessonService {
   }
 
   async getLessons(
-    offset: number,
-    limit: number,
+    { offset, limit, search, sortOrder }: GetLessonsQueryArgs,
     userId: string,
-    search: string,
-    sortOrder: SortOrder,
-  ): Promise<GetLessonsResponse> {
+  ): Promise<PaginatedLessonsResponse> {
     const whereOptions: Prisma.LessonWhereInput = {
       OR: [
         {
