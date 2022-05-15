@@ -16,7 +16,7 @@ export class ClassroomModel {
   @Field(() => LessonModel)
   lesson: LessonModel;
 
-  @Field()
+  @Field(() => String, { nullable: true })
   notes?: string;
 
   @Field(() => Date)
