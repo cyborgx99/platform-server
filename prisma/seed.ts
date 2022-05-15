@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
+import { lessonContent } from './seeds/lessonContent';
 import { lessonImages } from './seeds/lessonImages';
 import { users } from './seeds/users';
 
@@ -20,6 +21,9 @@ async function main() {
   });
   await prisma.lessonImage.createMany({
     data: lessonImages,
+  });
+  await prisma.lessonContent.createMany({
+    data: lessonContent,
   });
 }
 

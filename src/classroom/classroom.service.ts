@@ -25,7 +25,7 @@ export class ClassroomService {
     const classroom = await this.prismaService.classroom.create({
       data: {
         title: data.title,
-        studentId: data.studentId,
+        teacherId: userId,
         lesson: {
           connect: {
             id: data.lessonId,
@@ -33,7 +33,7 @@ export class ClassroomService {
         },
         user: {
           connect: {
-            id: userId,
+            id: data.studentId,
           },
         },
       },
@@ -64,7 +64,7 @@ export class ClassroomService {
     userId: string,
   ): Promise<ClassroomModel> {
     const classroom = await this.prismaService.classroom.findFirst({
-      where: { id: data.id, userId },
+      where: { id: data.id, teacherId: userId },
     });
 
     if (!classroom || classroom.userId !== userId) {
@@ -77,7 +77,6 @@ export class ClassroomService {
       },
       data: {
         title: data.title,
-        studentId: data.studentId,
         lesson: {
           connect: {
             id: data.lessonId,
@@ -85,7 +84,7 @@ export class ClassroomService {
         },
         user: {
           connect: {
-            id: userId,
+            id: data.studentId,
           },
         },
       },
@@ -116,15 +115,15 @@ export class ClassroomService {
     userId: string,
   ): Promise<PaginatedClassroomsResponse> {
     const whereOptions: Prisma.ClassroomWhereInput = {
+      teacherId: userId,
       OR: [
         {
           title: {
             startsWith: search,
             mode: 'insensitive',
           },
-          userId,
         },
-        { title: { endsWith: search, mode: 'insensitive' }, userId },
+        { title: { endsWith: search, mode: 'insensitive' } },
       ],
     };
 
@@ -147,6 +146,7 @@ export class ClassroomService {
               },
             },
           },
+          user: true,
         },
       }),
       this.prismaService.classroom.count({ where: whereOptions }),
@@ -177,14 +177,14 @@ export class ClassroomService {
     userId: string,
   ): Promise<DeleteClassroomResponse> {
     const classroom = await this.prismaService.classroom.findFirst({
-      where: { id, userId },
+      where: { id, teacherId: userId },
     });
 
-    if (!classroom || classroom.userId !== userId) {
+    if (!classroom || classroom.teacherId !== userId) {
       throw new ApolloError(Error_Codes.Unathorized);
     }
 
-    const deleted = await this.prismaService.lesson.delete({
+    const deleted = await this.prismaService.classroom.delete({
       where: {
         id,
       },
