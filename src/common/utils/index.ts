@@ -15,3 +15,14 @@ export function omitKeysInObject<T, K extends keyof T>(
     return rest;
   }, obj);
 }
+
+export const parseCookieString = (str = ''): Record<string, string> =>
+  str
+    .split(';')
+    .map((v) => v.split('='))
+    .reduce((accumulator, value) => {
+      accumulator[decodeURIComponent(value[0].trim())] = decodeURIComponent(
+        value[1].trim(),
+      );
+      return accumulator;
+    }, {});

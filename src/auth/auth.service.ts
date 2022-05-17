@@ -109,6 +109,7 @@ export class AuthService {
 
       // Set the JWT in a cookie
       context.res.cookie('token', accessToken, this.cookieOptions);
+
       return { success: true };
     } else {
       throw new ApolloError(Error_Codes.InvalidCredentials);
