@@ -62,3 +62,21 @@ export class DeleteClassroomResponse {
   @Field(() => ID)
   id: string;
 }
+
+@ArgsType()
+export class UpdateNotesMutationArgs {
+  @Field()
+  classroomId: string;
+
+  @Field()
+  notes: string;
+}
+
+@ObjectType()
+export class UpdateNotesMutationResponse {
+  @Field()
+  classroomId: string;
+
+  @Field()
+  notes: string;
+}
