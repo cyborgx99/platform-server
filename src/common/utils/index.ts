@@ -21,8 +21,8 @@ export const parseCookieString = (str = ''): Record<string, string> =>
     .split(';')
     .map((v) => v.split('='))
     .reduce((accumulator, value) => {
-      accumulator[decodeURIComponent(value[0].trim())] = decodeURIComponent(
-        value[1].trim(),
+      accumulator[decodeURIComponent(value[0]?.trim())] = decodeURIComponent(
+        value[1]?.trim(),
       );
       return accumulator;
     }, {});
