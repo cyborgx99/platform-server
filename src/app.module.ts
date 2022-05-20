@@ -14,6 +14,7 @@ import { CloudinaryProvider } from './cloudinary/cloudinary.provider';
 import { parseCookieString } from './common/utils';
 import { configValidationSchema } from './config.schema';
 import { PrismaModule } from './database/prisma.module';
+import { NotesModule } from './gateways/notes.module';
 import { LessonModule } from './lesson/lesson.module';
 import { LessonContentModule } from './lesson-content/lesson-content.module';
 import { LessonImageModule } from './lesson-image/lesson-image.module';
@@ -82,6 +83,7 @@ import { UserModule } from './user/user.module';
     LessonImageModule,
     LessonContentModule,
     PubSubModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
