@@ -32,7 +32,7 @@ export class ClassroomService {
           },
         },
         user: {
-          connect: {
+          connect: data.studentId && {
             id: data.studentId,
           },
         },
@@ -170,6 +170,33 @@ export class ClassroomService {
       totalCount,
       hasMore,
     };
+  }
+
+  async getSingleClassroom(
+    id: string,
+    userId: string,
+  ): Promise<ClassroomModel> {
+    const classroom = await this.prismaService.classroom.findFirst({
+      where: { id, teacherId: userId },
+      include: {
+        lesson: {
+          include: {
+            pages: {
+              include: {
+                lessonContent: true,
+                lessonImage: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const classroomWithParsedContentSentence: ClassroomModel = {
+      ...classroom,
+      lesson: parseContentSentenceInLesson(classroom.lesson),
+    };
+    return classroomWithParsedContentSentence;
   }
 
   async deleteClassroom(

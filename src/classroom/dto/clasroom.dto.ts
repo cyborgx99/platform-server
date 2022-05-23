@@ -80,3 +80,24 @@ export class UpdateNotesMutationResponse {
   @Field()
   notes: string;
 }
+
+export enum NotesGatewayMessages {
+  joinRoom = 'joinRoom',
+  textChange = 'textChange',
+  leaveRoom = 'leaveRoom',
+  saveDocument = 'saveDocument',
+}
+
+export enum SocketEmits {
+  loadNotes = 'loadNotes',
+  receiveChanges = 'receiveChanges',
+}
+
+export class JoinRoomData {
+  roomId: string;
+}
+
+export class TextChangeData {
+  roomId: string;
+  notes: string;
+}

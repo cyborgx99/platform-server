@@ -38,6 +38,16 @@ export class ClassroomResolver {
     return this.classroomService.createClassroom(createClassroomInput, user.id);
   }
 
+  @Query(() => ClassroomModel)
+  @Roles(Role.TEACHER)
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  getSingleClassroom(
+    @Args('id') classroomId: string,
+    @UserDecorator() user: UserWithoutPassword,
+  ): Promise<ClassroomModel> {
+    return this.classroomService.getSingleClassroom(classroomId, user.id);
+  }
+
   @Query(() => PaginatedClassroomsResponse)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)

@@ -11,16 +11,17 @@ import {
   NotesGatewayMessages,
   SocketEmits,
   TextChangeData,
-} from './notes.types';
+} from './dto/clasroom.dto';
 
+// not adding any credentials as some pages can be used by unathorized users
 @WebSocketGateway({
-  namespace: '/notes',
+  namespace: '/classroom',
   cors: {
     origin: `${process.env.CORS_ORIGIN}`,
     methods: ['GET', 'POST'],
   },
 })
-export class NotesGateway {
+export class ClassroomGateway {
   constructor(private prismaService: PrismaService) {}
   @WebSocketServer()
   server: Server;
