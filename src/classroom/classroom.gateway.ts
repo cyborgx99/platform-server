@@ -47,6 +47,31 @@ export class ClassroomGateway {
     client.leave(data.roomId);
   }
 
+  @SubscribeMessage(NotesGatewayMessages.emitInput)
+  handleQuizImput(client: Socket, data) {
+    const send = { value: data.value, partId: data.partId };
+    client.broadcast.to(data.roomId).emit(SocketEmits.changeInput, send);
+  }
+
+  @SubscribeMessage(NotesGatewayMessages.handleScrambled)
+  handleScrambled(client: Socket, data) {
+    const send = {
+      type: data.type,
+      part: data.part,
+      sentenceId: data.sentenceId,
+    };
+    client.broadcast.to(data.roomId).emit(SocketEmits.scrambledResponse, send);
+  }
+
+  @SubscribeMessage(NotesGatewayMessages.handleMulti)
+  handleMulti(client: Socket, data) {
+    const send = {
+      partId: data.partId,
+      value: data.value,
+    };
+    client.broadcast.to(data.roomId).emit(SocketEmits.multiResponse, send);
+  }
+
   @SubscribeMessage(NotesGatewayMessages.saveDocument)
   async handleSaveDocument(client: Socket, data: TextChangeData) {
     await this.prismaService.classroom.update({

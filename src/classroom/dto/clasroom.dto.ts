@@ -86,11 +86,17 @@ export enum NotesGatewayMessages {
   textChange = 'textChange',
   leaveRoom = 'leaveRoom',
   saveDocument = 'saveDocument',
+  emitInput = 'emitInput',
+  handleScrambled = 'handleScrambled',
+  handleMulti = 'handleMulti',
 }
 
 export enum SocketEmits {
   loadNotes = 'loadNotes',
   receiveChanges = 'receiveChanges',
+  changeInput = 'changeInput',
+  scrambledResponse = 'scrambledResponse',
+  multiResponse = 'multiResponse',
 }
 
 export class JoinRoomData {
