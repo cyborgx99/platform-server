@@ -18,7 +18,6 @@ import { LessonModule } from './lesson/lesson.module';
 import { LessonContentModule } from './lesson-content/lesson-content.module';
 import { LessonImageModule } from './lesson-image/lesson-image.module';
 import { MailModule } from './mail/mail.module';
-import { PubSubModule } from './pubsub/pub-sub.module';
 import { UserModule } from './user/user.module';
 @Module({
   imports: [
@@ -81,7 +80,6 @@ import { UserModule } from './user/user.module';
     ClassroomModule,
     LessonImageModule,
     LessonContentModule,
-    PubSubModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryProvider],
