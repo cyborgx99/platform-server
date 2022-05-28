@@ -1,5 +1,6 @@
 import { Catch, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
@@ -17,6 +18,10 @@ import {
   SetNewPasswordInput,
   SignInInput,
 } from './dto/auth.dto';
+import {
+  sendConfirmationEmail,
+  SendConfirmationEmailEvent,
+} from './events/confirmation-email.event';
 
 @Injectable()
 @Catch()
@@ -26,6 +31,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private mailService: MailService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   cookieOptions: CookieOptions = {
@@ -44,7 +50,16 @@ export class AuthService {
         data: { ...data, password: hashedPassword },
       });
 
-      return { success: user ? true : false };
+      if (!user) {
+        throw new ApolloError(Error_Codes.UserConflict);
+      }
+
+      this.eventEmitter.emit(
+        sendConfirmationEmail,
+        new SendConfirmationEmailEvent(data.email),
+      );
+
+      return { success: true };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -53,6 +68,26 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  @OnEvent(sendConfirmationEmail, { async: true })
+  async sendConfirmationEmail(payload: SendConfirmationEmailEvent) {
+    const tokenPayload: JwtPayload = { email: payload.email };
+    const token = await this.jwtService.signAsync(tokenPayload, {
+      secret: this.configService.get('JWT_RESET_SECRET'),
+      expiresIn: '20m',
+    });
+
+    const url = `${this.configService.get(
+      'CORS_ORIGIN',
+    )}/confirm?email=${token}`;
+
+    await this.mailService.sendEmail(
+      `${payload.email}`,
+      'Confirmation Email.',
+      { url: url },
+      'confirmEmail',
+    );
   }
 
   async setNewPassword(
@@ -130,7 +165,7 @@ export class AuthService {
     const payload: JwtPayload = { email: resetPasswordLinkInput.email };
     const resetToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('JWT_RESET_SECRET'),
-      expiresIn: '15m',
+      expiresIn: '20m',
     });
 
     await this.prisma.user.update({

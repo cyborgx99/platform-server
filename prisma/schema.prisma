@@ -32,6 +32,7 @@ model User {
   password String
   role    Role     @default(USER)
   resetToken String?
+  isEmailConfirmed Boolean @default(false)
   transactions Transaction[]
   classrooms Classroom[]
   lessonImages LessonImage[]

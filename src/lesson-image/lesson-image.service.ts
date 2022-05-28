@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { LessonImage, Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
 import { Error_Codes } from 'src/app.types';
@@ -12,12 +13,17 @@ import {
   PaginatedImagesResponse,
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
+import {
+  deleteFromCloudinary,
+  DeleteFromCloudinaryEvent,
+} from './events/delete-from-cloudinary.event';
 
 @Injectable()
 export class LessonImageService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinary: CloudinaryService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createLessonImage(
@@ -45,7 +51,10 @@ export class LessonImageService {
     }
 
     if (data.publicId) {
-      await this.cloudinary.deleteImage(data.publicId);
+      this.eventEmitter.emit(
+        deleteFromCloudinary,
+        new DeleteFromCloudinaryEvent(data.publicId),
+      );
     }
 
     return this.prisma.lessonImage.delete({ where: { id: data.id } });
@@ -64,7 +73,10 @@ export class LessonImageService {
     }
 
     if (image.publicId) {
-      await this.cloudinary.deleteImage(image.publicId);
+      this.eventEmitter.emit(
+        deleteFromCloudinary,
+        new DeleteFromCloudinaryEvent(data.publicId),
+      );
     }
 
     return this.prisma.lessonImage.update({
@@ -73,6 +85,11 @@ export class LessonImageService {
       },
       data,
     });
+  }
+
+  @OnEvent(deleteFromCloudinary, { async: true })
+  async deleteFromCloudinary(payload: DeleteFromCloudinaryEvent) {
+    await this.cloudinary.deleteImage(payload.publicId);
   }
 
   async getLessonImages(
