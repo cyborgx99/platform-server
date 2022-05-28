@@ -10,6 +10,7 @@ import {
   PaginatedQueryArgs,
   PaginatedResponse,
 } from 'src/common/dto/common.dto';
+import { LessonContentSentencePart } from 'src/lesson-content/models/lesson-content.model';
 
 import { ClassroomModel } from '../model/classroom.model';
 
@@ -81,17 +82,17 @@ export class UpdateNotesMutationResponse {
   notes: string;
 }
 
-export enum NotesGatewayMessages {
+export enum SocketOn {
   joinRoom = 'joinRoom',
-  textChange = 'textChange',
   leaveRoom = 'leaveRoom',
+  notesChange = 'notesChange',
   saveDocument = 'saveDocument',
-  emitInput = 'emitInput',
+  handleGap = 'handleGap',
   handleScrambled = 'handleScrambled',
   handleMulti = 'handleMulti',
 }
 
-export enum SocketEmits {
+export enum SocketEmit {
   loadNotes = 'loadNotes',
   receiveChanges = 'receiveChanges',
   changeInput = 'changeInput',
@@ -103,7 +104,26 @@ export class JoinRoomData {
   roomId: string;
 }
 
-export class TextChangeData {
+export class NotesChangeData {
   roomId: string;
   notes: string;
+}
+
+export class HandleGapData {
+  roomId: string;
+  value: string;
+  partId: string;
+}
+
+export class HandleScrambledData {
+  type: string;
+  part: LessonContentSentencePart;
+  sentenceId: string;
+  roomId: string;
+}
+
+export class HandleMultiData {
+  partId: string;
+  value: string;
+  roomId: string;
 }

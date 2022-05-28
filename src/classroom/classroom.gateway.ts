@@ -7,10 +7,13 @@ import { Server, Socket } from 'socket.io';
 import { PrismaService } from 'src/database/prisma.service';
 
 import {
+  HandleGapData,
+  HandleMultiData,
+  HandleScrambledData,
   JoinRoomData,
-  NotesGatewayMessages,
-  SocketEmits,
-  TextChangeData,
+  NotesChangeData,
+  SocketEmit,
+  SocketOn,
 } from './dto/clasroom.dto';
 
 // not adding any credentials as some pages can be used by unathorized users
@@ -26,54 +29,54 @@ export class ClassroomGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage(NotesGatewayMessages.joinRoom)
+  @SubscribeMessage(SocketOn.joinRoom)
   async handleJoinRoom(client: Socket, data: JoinRoomData) {
     const classroom = await this.prismaService.classroom.findUnique({
       where: { id: data.roomId },
     });
 
     client.join(data.roomId);
-    client.emit(SocketEmits.loadNotes, { notes: classroom?.notes ?? '{}' });
+    client.emit(SocketEmit.loadNotes, { notes: classroom?.notes ?? '{}' });
   }
 
-  @SubscribeMessage(NotesGatewayMessages.textChange)
-  handleTextChange(client: Socket, data: TextChangeData) {
+  @SubscribeMessage(SocketOn.notesChange)
+  handleNotesChange(client: Socket, data: NotesChangeData) {
     const send = { notes: data.notes };
-    client.broadcast.to(data.roomId).emit(SocketEmits.receiveChanges, send);
+    client.broadcast.to(data.roomId).emit(SocketEmit.receiveChanges, send);
   }
 
-  @SubscribeMessage(NotesGatewayMessages.leaveRoom)
+  @SubscribeMessage(SocketOn.leaveRoom)
   handleLeaveRoom(client: Socket, data) {
     client.leave(data.roomId);
   }
 
-  @SubscribeMessage(NotesGatewayMessages.emitInput)
-  handleQuizImput(client: Socket, data) {
+  @SubscribeMessage(SocketOn.handleGap)
+  handleQuizImput(client: Socket, data: HandleGapData) {
     const send = { value: data.value, partId: data.partId };
-    client.broadcast.to(data.roomId).emit(SocketEmits.changeInput, send);
+    client.broadcast.to(data.roomId).emit(SocketEmit.changeInput, send);
   }
 
-  @SubscribeMessage(NotesGatewayMessages.handleScrambled)
-  handleScrambled(client: Socket, data) {
+  @SubscribeMessage(SocketOn.handleScrambled)
+  handleScrambled(client: Socket, data: HandleScrambledData) {
     const send = {
       type: data.type,
       part: data.part,
       sentenceId: data.sentenceId,
     };
-    client.broadcast.to(data.roomId).emit(SocketEmits.scrambledResponse, send);
+    client.broadcast.to(data.roomId).emit(SocketEmit.scrambledResponse, send);
   }
 
-  @SubscribeMessage(NotesGatewayMessages.handleMulti)
-  handleMulti(client: Socket, data) {
+  @SubscribeMessage(SocketOn.handleMulti)
+  handleMulti(client: Socket, data: HandleMultiData) {
     const send = {
       partId: data.partId,
       value: data.value,
     };
-    client.broadcast.to(data.roomId).emit(SocketEmits.multiResponse, send);
+    client.broadcast.to(data.roomId).emit(SocketEmit.multiResponse, send);
   }
 
-  @SubscribeMessage(NotesGatewayMessages.saveDocument)
-  async handleSaveDocument(client: Socket, data: TextChangeData) {
+  @SubscribeMessage(SocketOn.saveDocument)
+  async handleSaveDocument(client: Socket, data: NotesChangeData) {
     await this.prismaService.classroom.update({
       where: {
         id: data.roomId,
