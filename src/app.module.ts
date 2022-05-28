@@ -1,6 +1,7 @@
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
@@ -21,6 +22,7 @@ import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.test'],
       validationSchema: configValidationSchema,
@@ -41,7 +43,6 @@ import { UserModule } from './user/user.module';
             const cookies = parseCookieString(
               context?.extra?.request.headers.cookie,
             );
-
             return {
               req: {
                 ...context?.extra?.request,
