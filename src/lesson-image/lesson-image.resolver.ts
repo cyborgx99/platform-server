@@ -15,45 +15,45 @@ import {
   UpdateLessonImageInput,
 } from './dto/lesson-image.dto';
 import { LessonImageService } from './lesson-image.service';
-import { LessonImage } from './models/lesson-image.model';
+import { LessonImageModel } from './models/lesson-image.model';
 
 @Resolver()
 export class LessonImageResolver {
   constructor(private readonly lessonImageService: LessonImageService) {}
 
-  @Mutation(() => LessonImage)
+  @Mutation(() => LessonImageModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonImage(
     @Args('input') createLessonInput: CreateLessonImageInput,
     @UserDecorator() user: UserWithoutPassword,
-  ): Promise<LessonImage> {
+  ): Promise<LessonImageModel> {
     return this.lessonImageService.createLessonImage(
       createLessonInput,
       user.id,
     );
   }
 
-  @Mutation(() => LessonImage)
+  @Mutation(() => LessonImageModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonImage(
     @Args('input') updateLessonInput: UpdateLessonImageInput,
     @UserDecorator() user: UserWithoutPassword,
-  ): Promise<LessonImage> {
+  ): Promise<LessonImageModel> {
     return this.lessonImageService.updateLessonImage(
       updateLessonInput,
       user.id,
     );
   }
 
-  @Mutation(() => LessonImage)
+  @Mutation(() => LessonImageModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLessonImage(
     @Args('input') deleteImageLessonInput: DeleteLessonImageInput,
     @UserDecorator() user: UserWithoutPassword,
-  ): Promise<LessonImage> {
+  ): Promise<LessonImageModel> {
     return this.lessonImageService.deleteLessonImage(
       deleteImageLessonInput,
       user.id,

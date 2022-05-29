@@ -1,12 +1,22 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { AbstractModel } from 'src/common/models/abstract.model';
+import { LessonContentModel } from 'src/lesson-content/models/lesson-content.model';
+import { LessonImageModel } from 'src/lesson-image/models/lesson-image.model';
 
-import { LessonPageObject } from '../dto/lesson.dto';
-
-@ObjectType('Lesson')
-export class LessonModel {
+@ObjectType()
+export class LessonPageObject {
   @Field(() => ID)
   id: string;
 
+  @Field(() => LessonImageModel)
+  lessonImage: LessonImageModel;
+
+  @Field(() => LessonContentModel)
+  lessonContent: LessonContentModel;
+}
+
+@ObjectType('Lesson')
+export class LessonModel extends AbstractModel {
   @Field()
   title: string;
 
@@ -15,7 +25,4 @@ export class LessonModel {
 
   @Field(() => [LessonPageObject])
   pages: LessonPageObject[];
-
-  @Field(() => Date)
-  createdAt: Date;
 }

@@ -13,7 +13,7 @@ import {
 } from 'src/common/dto/common.dto';
 
 import {
-  LessonContent,
+  LessonContentModel,
   LessonContentSentence,
 } from '../models/lesson-content.model';
 
@@ -38,7 +38,7 @@ export class UpdateLessonContentInput extends PartialType(
 
 @ObjectType()
 export class PaginatedContentsResponse extends PaginatedResponse(
-  LessonContent,
+  LessonContentModel,
 ) {}
 
 @ArgsType()

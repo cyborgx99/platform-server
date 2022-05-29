@@ -1,12 +1,10 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { AbstractModel } from 'src/common/models/abstract.model';
 import { LessonModel } from 'src/lesson/models/lesson.model';
 import { User } from 'src/user/models/user.model';
 
 @ObjectType('Classroom')
-export class ClassroomModel {
-  @Field(() => ID)
-  id: string;
-
+export class ClassroomModel extends AbstractModel {
   @Field()
   title: string;
 
@@ -18,7 +16,4 @@ export class ClassroomModel {
 
   @Field(() => String, { nullable: true })
   notes?: string;
-
-  @Field(() => Date)
-  createdAt: Date;
 }

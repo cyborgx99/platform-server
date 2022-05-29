@@ -11,7 +11,7 @@ import {
   PaginatedContentsResponse,
   UpdateLessonContentInput,
 } from './dto/lesson-content.dto';
-import { LessonContent } from './models/lesson-content.model';
+import { LessonContentModel } from './models/lesson-content.model';
 
 @Injectable()
 export class LessonContentService {
@@ -20,7 +20,7 @@ export class LessonContentService {
   async createLessonContent(
     data: CreateLessonContentInput,
     userId: string,
-  ): Promise<LessonContent> {
+  ): Promise<LessonContentModel> {
     const stringified = JSON.stringify(data.sentences);
 
     const content = await this.prismaService.lessonContent.create({
@@ -31,6 +31,7 @@ export class LessonContentService {
       id: content.id,
       sentences: JSON.parse(content.sentences),
       title: content.title,
+      createdAt: content.createdAt,
     };
   }
 
@@ -67,11 +68,12 @@ export class LessonContentService {
 
     const hasMore = offset < totalCount && totalCount > limit;
 
-    const parsedSentences = lessonContent.map<LessonContent>((content) => {
+    const parsedSentences = lessonContent.map<LessonContentModel>((content) => {
       return {
         id: content.id,
         sentences: JSON.parse(content.sentences),
         title: content.title,
+        createdAt: content.createdAt,
       };
     });
 
@@ -109,7 +111,7 @@ export class LessonContentService {
   async updateLessonContent(
     data: UpdateLessonContentInput,
     userId: string,
-  ): Promise<LessonContent> {
+  ): Promise<LessonContentModel> {
     const stringified = JSON.stringify(data.sentences);
 
     const found = await this.prismaService.lessonContent.findFirst({
@@ -134,6 +136,7 @@ export class LessonContentService {
       id: updatedContent.id,
       sentences: JSON.parse(updatedContent.sentences),
       title: updatedContent.title,
+      createdAt: updatedContent.createdAt,
     };
   }
 }

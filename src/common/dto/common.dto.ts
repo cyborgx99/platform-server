@@ -16,6 +16,29 @@ registerEnumType(SortOrder, {
   name: 'SortOrder',
 });
 
+export enum LessonSentenceType {
+  Text = 'Text',
+  Title = 'Title',
+  Gap = 'Gap',
+  Multi = 'Multi',
+  Scramble = 'Scramble',
+}
+
+export enum PartType {
+  Gap = 'Gap',
+  Regular = 'Regular',
+  RightAnswer = 'RightAnswer',
+  WrongAnswer = 'WrongAnswer',
+}
+
+registerEnumType(LessonSentenceType, {
+  name: 'LessonSentenceType',
+});
+
+registerEnumType(PartType, {
+  name: 'PartType',
+});
+
 export interface IPaginatedResponseType<T> {
   data: T[];
   totalCount: number;

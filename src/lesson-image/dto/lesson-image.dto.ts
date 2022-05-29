@@ -11,7 +11,7 @@ import {
   PaginatedResponse,
 } from 'src/common/dto/common.dto';
 
-import { LessonImage } from '../models/lesson-image.model';
+import { LessonImageModel } from '../models/lesson-image.model';
 
 @InputType()
 export class CreateLessonImageInput {
@@ -42,7 +42,9 @@ export class UpdateLessonImageInput extends PartialType(
   id: string;
 }
 @ObjectType()
-export class PaginatedImagesResponse extends PaginatedResponse(LessonImage) {}
+export class PaginatedImagesResponse extends PaginatedResponse(
+  LessonImageModel,
+) {}
 
 @ArgsType()
 export class GetImagesQueryArgs extends PaginatedQueryArgs {}

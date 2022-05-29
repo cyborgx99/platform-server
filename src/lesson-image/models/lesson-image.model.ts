@@ -1,11 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { AbstractModel } from 'src/common/models/abstract.model';
 import { LessonModel } from 'src/lesson/models/lesson.model';
 
-@ObjectType()
-export class LessonImage {
-  @Field(() => ID)
-  id: string;
-
+@ObjectType('LessonImage')
+export class LessonImageModel extends AbstractModel {
   @Field(() => String)
   title: string;
 

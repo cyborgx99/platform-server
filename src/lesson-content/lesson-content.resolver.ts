@@ -15,19 +15,19 @@ import {
   UpdateLessonContentInput,
 } from './dto/lesson-content.dto';
 import { LessonContentService } from './lesson-content.service';
-import { LessonContent } from './models/lesson-content.model';
+import { LessonContentModel } from './models/lesson-content.model';
 
 @Resolver()
 export class LessonContentResolver {
   constructor(private readonly lessonContentService: LessonContentService) {}
 
-  @Mutation(() => LessonContent)
+  @Mutation(() => LessonContentModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonContent(
     @Args('input') createLessonContentInput: CreateLessonContentInput,
     @UserDecorator() user: UserWithoutPassword,
-  ): Promise<LessonContent> {
+  ): Promise<LessonContentModel> {
     return this.lessonContentService.createLessonContent(
       createLessonContentInput,
       user.id,
@@ -57,13 +57,13 @@ export class LessonContentResolver {
     return this.lessonContentService.deleteLessonContent(id, user.id);
   }
 
-  @Mutation(() => LessonContent)
+  @Mutation(() => LessonContentModel)
   @Roles(Role.TEACHER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonContent(
     @Args('input') updateLessonContentInput: UpdateLessonContentInput,
     @UserDecorator() user: UserWithoutPassword,
-  ): Promise<LessonContent> {
+  ): Promise<LessonContentModel> {
     return this.lessonContentService.updateLessonContent(
       updateLessonContentInput,
       user.id,

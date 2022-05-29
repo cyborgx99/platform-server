@@ -6,9 +6,10 @@ import {
   ObjectType,
   PartialType,
 } from '@nestjs/graphql';
-import { PaginatedQueryArgs } from 'src/common/dto/common.dto';
-import { LessonContent } from 'src/lesson-content/models/lesson-content.model';
-import { LessonImage } from 'src/lesson-image/models/lesson-image.model';
+import {
+  PaginatedQueryArgs,
+  PaginatedResponse,
+} from 'src/common/dto/common.dto';
 
 import { LessonModel } from '../models/lesson.model';
 
@@ -22,18 +23,6 @@ export class LessonPage {
 
   @Field()
   lessonContentId: string;
-}
-
-@ObjectType()
-export class LessonPageObject {
-  @Field(() => ID)
-  id: string;
-
-  @Field(() => LessonImage)
-  lessonImage: LessonImage;
-
-  @Field(() => LessonContent)
-  lessonContent: LessonContent;
 }
 
 @InputType()
@@ -55,19 +44,7 @@ export class UpdateLessonInput extends PartialType(CreateLessonInput) {
 }
 
 @ObjectType()
-export class PaginatedLessonsResponse {
-  @Field(() => [LessonModel])
-  data: LessonModel[];
-
-  @Field()
-  totalCount: number;
-
-  @Field()
-  pages: number;
-
-  @Field()
-  hasMore: boolean;
-}
+export class PaginatedLessonsResponse extends PaginatedResponse(LessonModel) {}
 
 @ArgsType()
 export class GetLessonsQueryArgs extends PaginatedQueryArgs {}

@@ -1,11 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
+import { AbstractModel } from 'src/common/models/abstract.model';
 
 @ObjectType({ description: 'User' })
-export class User {
-  @Field(() => ID)
-  id: string;
-
+export class User extends AbstractModel {
   @Field()
   name: string;
 
@@ -17,7 +15,4 @@ export class User {
 
   @Field(() => Role)
   role: Role;
-
-  @Field(() => Date)
-  createdAt: Date;
 }
