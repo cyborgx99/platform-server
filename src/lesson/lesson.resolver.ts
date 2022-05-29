@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { CurrentUser } from 'src/user/user.decorator';
 
 import {
   CreateLessonInput,
@@ -26,7 +26,7 @@ export class LessonResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLesson(
     @Args('input') createLessonInput: CreateLessonInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<LessonModel> {
     return this.lessonService.createLesson(createLessonInput, user.id);
   }
@@ -36,7 +36,7 @@ export class LessonResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLesson(
     @Args('input') updateLessonInput: UpdateLessonInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<LessonModel> {
     return this.lessonService.updateLesson(updateLessonInput, user.id);
   }
@@ -46,7 +46,7 @@ export class LessonResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   getLessons(
     @Args() getLessonsQueryArgs: GetLessonsQueryArgs,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<PaginatedLessonsResponse> {
     return this.lessonService.getLessons(getLessonsQueryArgs, user.id);
   }
@@ -56,7 +56,7 @@ export class LessonResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLesson(
     @Args('id') id: string,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<DeleteLessonResponse> {
     return this.lessonService.deleteLesson(id, user.id);
   }

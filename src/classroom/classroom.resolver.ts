@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { CurrentUser } from 'src/user/user.decorator';
 
 import { ClassroomService } from './classroom.service';
 import {
@@ -26,7 +26,7 @@ export class ClassroomResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   createClassroom(
     @Args('input') createClassroomInput: CreateClassroomInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<ClassroomModel> {
     return this.classroomService.createClassroom(createClassroomInput, user.id);
   }
@@ -36,7 +36,7 @@ export class ClassroomResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   getSingleClassroom(
     @Args('id') classroomId: string,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<ClassroomModel> {
     return this.classroomService.getSingleClassroom(classroomId, user.id);
   }
@@ -46,7 +46,7 @@ export class ClassroomResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   getClassrooms(
     @Args() getClassroomsQueryArgs: GetClassroomsQueryArgs,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<PaginatedClassroomsResponse> {
     return this.classroomService.getClassrooms(getClassroomsQueryArgs, user.id);
   }
@@ -56,7 +56,7 @@ export class ClassroomResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateClassroom(
     @Args('input') updateClassroomInput: UpdateClassroomInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<ClassroomModel> {
     return this.classroomService.updateClassroom(updateClassroomInput, user.id);
   }
@@ -66,7 +66,7 @@ export class ClassroomResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteClassroom(
     @Args('id') id: string,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<DeleteClassroomResponse> {
     return this.classroomService.deleteClassroom(id, user.id);
   }

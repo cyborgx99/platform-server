@@ -26,9 +26,9 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.test'],
       validationSchema: configValidationSchema,
+      isGlobal: true,
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      imports: [ConfigModule],
       driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({
         playground: false,

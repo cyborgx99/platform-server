@@ -18,6 +18,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw err || new ApolloError(Error_Codes.Unathorized);
     }
+
     return user;
   }
 }

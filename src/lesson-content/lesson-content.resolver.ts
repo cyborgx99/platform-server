@@ -1,11 +1,11 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
+import { CurrentUser } from 'src/user/user.decorator';
 
 import {
   CreateLessonContentInput,
@@ -26,7 +26,7 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   createLessonContent(
     @Args('input') createLessonContentInput: CreateLessonContentInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<LessonContentModel> {
     return this.lessonContentService.createLessonContent(
       createLessonContentInput,
@@ -39,7 +39,7 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   getLessonContents(
     @Args() getLessonContentsQueryArgs: GetContentsQueryArgs,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<PaginatedContentsResponse> {
     return this.lessonContentService.getLessonContents(
       getLessonContentsQueryArgs,
@@ -52,7 +52,7 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   deleteLessonContent(
     @Args('id') id: string,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<DeleteLessonContentResponse> {
     return this.lessonContentService.deleteLessonContent(id, user.id);
   }
@@ -62,7 +62,7 @@ export class LessonContentResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   updateLessonContent(
     @Args('input') updateLessonContentInput: UpdateLessonContentInput,
-    @UserDecorator() user: UserWithoutPassword,
+    @CurrentUser() user: UserWithoutPassword,
   ): Promise<LessonContentModel> {
     return this.lessonContentService.updateLessonContent(
       updateLessonContentInput,

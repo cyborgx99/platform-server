@@ -20,13 +20,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: configService.get('JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          const data = request?.cookies['token'];
+          const token = request?.cookies?.['token'];
 
-          if (!data) {
+          if (!token) {
             throw new ApolloError(Error_Codes.Unathorized);
           }
 
-          return data;
+          return token;
         },
       ]),
     });

@@ -1,10 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/auth.roles.guard';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 import { Roles } from 'src/auth/roles.decorator';
-import { UserDecorator } from 'src/common/decorators/user.decorator';
+import { CurrentUser } from 'src/user/user.decorator';
 
 import {
   GetUsersQueryArgs,
@@ -20,7 +20,7 @@ export class UserResolver {
 
   @Query(() => User)
   @UseGuards(GqlAuthGuard)
-  getUser(@UserDecorator() user: UserWithoutPassword): UserWithoutPassword {
+  getUser(@CurrentUser() user: UserWithoutPassword): UserWithoutPassword {
     return user;
   }
 
