@@ -26,6 +26,7 @@ CREATE TABLE "Transaction" (
     "amount" INTEGER NOT NULL,
     "type" "TransactionType" NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
@@ -37,6 +38,7 @@ CREATE TABLE "LessonImage" (
     "publicId" TEXT,
     "title" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "LessonImage_pkey" PRIMARY KEY ("id")
 );
@@ -47,6 +49,7 @@ CREATE TABLE "LessonContent" (
     "title" TEXT NOT NULL,
     "sentences" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "LessonContent_pkey" PRIMARY KEY ("id")
 );
@@ -68,6 +71,7 @@ CREATE TABLE "LessonPage" (
     "lessonImageId" TEXT NOT NULL,
     "lessonContentId" TEXT NOT NULL,
     "lessonId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "LessonPage_pkey" PRIMARY KEY ("id")
 );

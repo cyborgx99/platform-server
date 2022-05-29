@@ -1,4 +1,4 @@
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -27,7 +27,7 @@ import { UserModule } from './user/user.module';
       envFilePath: ['.env', '.env.development', '.env.test'],
       validationSchema: configValidationSchema,
     }),
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule],
       driver: ApolloDriver,
       useFactory: (configService: ConfigService) => ({

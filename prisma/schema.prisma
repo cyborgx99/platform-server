@@ -49,6 +49,7 @@ model Transaction {
   amount Int
   type   TransactionType
   date  DateTime
+  createdAt DateTime @default(now())
 }
 
 model LessonImage {
@@ -59,6 +60,7 @@ model LessonImage {
   pages    LessonPage[]
   user     User @relation(fields: [userId], references: [id])
   userId   String
+  createdAt DateTime @default(now())
 }
 
 model LessonContent {
@@ -68,6 +70,7 @@ model LessonContent {
   pages     LessonPage[]
   user      User @relation(fields: [userId], references: [id])
   userId    String
+  createdAt DateTime @default(now())
 }
 
 model Lesson {
@@ -92,6 +95,7 @@ model LessonPage {
 
   lesson Lesson @relation(fields: [lessonId], references: [id])
   lessonId String
+  createdAt DateTime @default(now())
 }
 
 model Classroom {
