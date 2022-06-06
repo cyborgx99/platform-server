@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
-import { Error_Codes } from 'src/app.types';
+import { Error_Messages } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
 
 import {
@@ -68,7 +68,7 @@ export class LessonService {
     });
 
     if (!lesson || lesson.userId !== userId) {
-      throw new ApolloError(Error_Codes.CannotUpdate);
+      throw new ApolloError(Error_Messages.CannotUpdate);
     }
 
     const lessonToUpdate = await this.prismaService.lesson.update({
@@ -175,7 +175,7 @@ export class LessonService {
     });
 
     if (!lesson || lesson.userId !== userId) {
-      throw new ApolloError(Error_Codes.Unathorized);
+      throw new ApolloError(Error_Messages.Unathorized);
     }
 
     await this.prismaService.lesson.update({

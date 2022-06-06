@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { LessonImage, Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
-import { Error_Codes } from 'src/app.types';
+import { Error_Messages } from 'src/app.types';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { PrismaService } from 'src/database/prisma.service';
 
@@ -47,7 +47,7 @@ export class LessonImageService {
     });
 
     if (!image || image.userId !== userId) {
-      throw new ApolloError(Error_Codes.Unathorized);
+      throw new ApolloError(Error_Messages.Unathorized);
     }
 
     if (data.publicId) {
@@ -69,7 +69,7 @@ export class LessonImageService {
     });
 
     if (!image || image.userId !== userId) {
-      throw new ApolloError(Error_Codes.Unathorized);
+      throw new ApolloError(Error_Messages.Unathorized);
     }
 
     if (image.publicId) {

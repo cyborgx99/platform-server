@@ -1,10 +1,11 @@
-export enum Error_Codes {
-  UserConflict = 'USER_CONFLICT',
-  InvalidCredentials = 'INVALID_CREDENTIALS',
-  Unathorized = 'UNATHORIZED',
-  NoInternet = 'NO_INTERNET',
-  NetworkError = 'NETWORK_ERROR',
-  SomethingWentWrong = 'SOMETHING_WENT_WRONG',
+export enum Error_Messages {
+  UserConflict = 'UserConflict',
+  InvalidCredentials = 'InvalidCredentials',
+  Unathorized = 'Unathorized',
+  NoInternet = 'NoInternet',
+  NetworkError = 'NetworkError',
+  SomethingWentWrong = 'SomethingWentWrong',
   InvalidOrExpired = 'InvalidOrExpired',
   CannotUpdate = 'CannotUpdate',
+  UnconfirmedEmail = 'UnconfirmedEmail',
 }

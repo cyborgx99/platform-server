@@ -4,8 +4,10 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import {
   AuthSuccessResponse,
+  ConfirmEmailInput,
   CreateResetPasswordLinkInput,
   Ctx,
+  ResendConfirmationEmailInput,
   SetNewPasswordInput,
   SignInInput,
   SignUpInput,
@@ -21,7 +23,23 @@ export class AuthResolver {
     @Args('input') signInInput: SignInInput,
     @Context() context: Ctx,
   ): Promise<AuthSuccessResponse> {
-    return this.authService.getUserToken(signInInput, context);
+    return this.authService.signIn(signInInput, context);
+  }
+
+  @Mutation(() => AuthSuccessResponse)
+  resendConfirmationEmail(
+    @Args('input') resendConfirmationEmailInput: ResendConfirmationEmailInput,
+  ): Promise<AuthSuccessResponse> {
+    return this.authService.resendConfirmationEmail(
+      resendConfirmationEmailInput,
+    );
+  }
+
+  @Mutation(() => AuthSuccessResponse)
+  confirmEmail(
+    @Args('input') confirmEmailInput: ConfirmEmailInput,
+  ): Promise<AuthSuccessResponse> {
+    return this.authService.confirmEmail(confirmEmailInput);
   }
 
   @Mutation(() => AuthSuccessResponse)

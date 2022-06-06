@@ -103,3 +103,19 @@ export class SignInInput {
   @MaxLength(32)
   password: string;
 }
+
+@InputType()
+export class ResendConfirmationEmailInput {
+  @Field()
+  @IsString()
+  @MinLength(2)
+  @IsEmail({}, { message: 'Invalid email' })
+  email: string;
+}
+
+@InputType()
+export class ConfirmEmailInput {
+  @Field()
+  @IsString()
+  token: string;
+}

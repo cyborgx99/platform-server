@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ApolloError } from 'apollo-server-express';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Error_Codes } from 'src/app.types';
+import { Error_Messages } from 'src/app.types';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserWithoutPassword } from 'src/user/dto/user.dto';
 
@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           const token = request?.cookies?.['token'];
 
           if (!token) {
-            throw new ApolloError(Error_Codes.Unathorized);
+            throw new ApolloError(Error_Messages.Unathorized);
           }
 
           return token;
@@ -49,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
 
     if (!user) {
-      throw new ApolloError(Error_Codes.Unathorized);
+      throw new ApolloError(Error_Messages.Unathorized);
     }
 
     return user;

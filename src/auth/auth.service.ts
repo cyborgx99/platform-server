@@ -6,15 +6,17 @@ import { Prisma } from '@prisma/client';
 import { ApolloError } from 'apollo-server-express';
 import * as bcrypt from 'bcrypt';
 import { CookieOptions } from 'express';
-import { Error_Codes } from 'src/app.types';
+import { Error_Messages } from 'src/app.types';
 import { MailService } from 'src/mail/mail.service';
 
 import { PrismaService } from '../database/prisma.service';
 import {
   AuthSuccessResponse,
+  ConfirmEmailInput,
   CreateResetPasswordLinkInput,
   Ctx,
   JwtPayload,
+  ResendConfirmationEmailInput,
   SetNewPasswordInput,
   SignInInput,
 } from './dto/auth.dto';
@@ -51,7 +53,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new ApolloError(Error_Codes.UserConflict);
+        throw new ApolloError(Error_Messages.UserConflict);
       }
 
       this.eventEmitter.emit(
@@ -63,7 +65,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ApolloError(Error_Codes.UserConflict);
+          throw new ApolloError(Error_Messages.UserConflict);
         }
       }
       throw error;
@@ -106,7 +108,7 @@ export class AuthService {
       });
 
       if (user === null || decoded === null) {
-        throw new ApolloError(Error_Codes.InvalidOrExpired);
+        throw new ApolloError(Error_Messages.InvalidOrExpired);
       }
 
       const salt = await bcrypt.genSalt();
@@ -123,20 +125,65 @@ export class AuthService {
         error.message === 'jwt expired' ||
         error.message === 'invalid token'
       ) {
-        throw new ApolloError(Error_Codes.InvalidOrExpired);
+        throw new ApolloError(Error_Messages.InvalidOrExpired);
       } else {
         throw error;
       }
     }
   }
 
-  async getUserToken(
-    data: SignInInput,
-    context: Ctx,
+  async resendConfirmationEmail(
+    data: ResendConfirmationEmailInput,
   ): Promise<AuthSuccessResponse> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
+
+    if (!user) {
+      throw new ApolloError(Error_Messages.UserConflict);
+    }
+
+    this.eventEmitter.emit(
+      sendConfirmationEmail,
+      new SendConfirmationEmailEvent(data.email),
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  async confirmEmail(data: ConfirmEmailInput): Promise<AuthSuccessResponse> {
+    const decoded = await this.jwtService.verifyAsync<JwtPayload>(data.token, {
+      secret: this.configService.get('JWT_RESET_SECRET'),
+    });
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: decoded?.email },
+    });
+
+    if (user.isEmailConfirmed === true || decoded === null) {
+      throw new ApolloError(Error_Messages.InvalidOrExpired);
+    }
+
+    await this.prisma.user.update({
+      where: { email: decoded?.email },
+      data: {
+        isEmailConfirmed: true,
+      },
+    });
+
+    return { success: true };
+  }
+
+  async signIn(data: SignInInput, context: Ctx): Promise<AuthSuccessResponse> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (!user.isEmailConfirmed) {
+      throw new ApolloError(Error_Messages.UnconfirmedEmail);
+    }
 
     if (user && (await bcrypt.compare(data.password, user.password))) {
       const payload: JwtPayload = { email: user.email };
@@ -147,7 +194,7 @@ export class AuthService {
 
       return { success: true };
     } else {
-      throw new ApolloError(Error_Codes.InvalidCredentials);
+      throw new ApolloError(Error_Messages.InvalidCredentials);
     }
   }
 
@@ -159,7 +206,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ApolloError(Error_Codes.SomethingWentWrong);
+      throw new ApolloError(Error_Messages.SomethingWentWrong);
     }
 
     const payload: JwtPayload = { email: resetPasswordLinkInput.email };
